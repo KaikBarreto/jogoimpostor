@@ -269,13 +269,13 @@
     .theme{border-right:0!important}
   }
 
-  /* mode cards — always 2-col */
-  .themes.modes{grid-template-columns:repeat(2,minmax(0,1fr));border-bottom:1px solid var(--rule)}
-  @media(max-width:480px){.themes.modes{grid-template-columns:1fr}}
-  .themes.modes .theme{padding:24px 22px}
-  .themes.modes .theme:nth-child(2n){border-right:0}
-  .themes.modes .theme .tname{font-size:clamp(22px,3vw,32px)}
-  @media(max-width:480px){
+  /* mode cards — flexible for N modes */
+  .themes.modes{grid-template-columns:repeat(3,minmax(0,1fr));border-bottom:1px solid var(--rule)}
+  @media(max-width:780px){.themes.modes{grid-template-columns:1fr}}
+  .themes.modes .theme{padding:22px 20px}
+  .themes.modes .theme:nth-child(3n){border-right:0}
+  .themes.modes .theme .tname{font-size:clamp(20px,2.6vw,28px)}
+  @media(max-width:780px){
     .themes.modes .theme{border-right:0!important}
   }
   .theme .tno{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--ink-dim);text-transform:uppercase}
@@ -902,9 +902,9 @@
 
   <div class="game-body">
     <div class="game-prompt">
-      <span class="small">Vez de dar a dica</span>
+      <span class="small" id="turnEyebrow">Vez de dar a dica</span>
       <div class="big" id="turnName">—<span class="pt">.</span></div>
-      <div class="meta ital">Diga uma palavra ou frase curta relacionada à palavra secreta. Sem entregá-la, sem mentir.</div>
+      <div class="meta ital" id="turnMeta">Diga uma palavra ou frase curta relacionada à palavra secreta. Sem entregá-la, sem mentir.</div>
     </div>
 
     <div class="order-list" id="orderList"></div>
@@ -990,8 +990,37 @@ const MODES = {
     desc: "Mesma pergunta para todos. O impostor deve fingir que sabe.",
     suit: "?",
     idx: "PG"
+  },
+  historia: {
+    label: "História Coletiva",
+    desc: "Todos veem o início. O impostor não sabe e improvisa.",
+    suit: "§",
+    idx: "HC"
   }
 };
+
+const STORIES = [
+  { t: "O Anel Dourado", p: "Marcos acordou com um anel dourado na mão e nenhuma lembrança de como ele chegou ali." },
+  { t: "Reunião de Costas", p: "A reunião começou normal, até que o chefe entrou andando de costas e não disse uma palavra." },
+  { t: "O Pacote Vermelho", p: "Quando ela abriu o pacote, a primeira coisa que viu foi uma carta escrita em vermelho." },
+  { t: "Carro na Padaria", p: "Chovia tanto naquela noite que ninguém reparou no carro abandonado em frente à padaria." },
+  { t: "13º Andar", p: "O elevador parou no 13º andar — só que o prédio só tinha 12." },
+  { t: "Ligação às 3h", p: "Carla recebeu uma ligação às 3h da manhã. Era a voz dela mesma do outro lado." },
+  { t: "Latidos pro Nada", p: "Foi na terceira vez que o cachorro latiu para o nada que Pedro decidiu se mudar." },
+  { t: "Três Palavras", p: "O e-mail tinha apenas três palavras: 'Não vá amanhã.'" },
+  { t: "Acordamos na Floresta", p: "Acordamos no meio da floresta, todos vestidos do mesmo jeito, sem saber por quê." },
+  { t: "A Caixa de Chá", p: "A última coisa que a vovó disse antes de morrer foi: 'Não abram a caixa de chá.'" },
+  { t: "Os Três Irmãos", p: "Os três irmãos prometeram nunca mais voltar àquele restaurante. Hoje, estavam de volta." },
+  { t: "Uber Estranho", p: "O motorista de Uber se virou e perguntou: 'É a primeira vez que você vê esse endereço também?'" },
+  { t: "Cachorro Falante", p: "Quando o relógio bateu meia-noite, o cachorro da casa começou a falar." },
+  { t: "Bilhete na Porta", p: "O bilhete embaixo da porta dizia apenas: 'Eu sei o que você fez no verão passado.'" },
+  { t: "Casa de Praia", p: "Era pra ser uma viagem normal de fim de semana até a casa de praia da tia. Não era." },
+  { t: "A Vizinha", p: "A vizinha sempre saía às 7h em ponto. Naquele dia, ela simplesmente não saiu." },
+  { t: "Aula Final", p: "O professor entrou na sala e escreveu no quadro: 'Hoje vocês vão me julgar.'" },
+  { t: "Palhaço Sem Convite", p: "A festa começou perfeita — até o palhaço perceber que ninguém tinha contratado palhaço." },
+  { t: "Airbnb", p: "Entramos no Airbnb e tinha uma carta sobre a mesa: 'Vocês são os terceiros este mês.'" },
+  { t: "Antes do Voo", p: "Dois minutos antes do voo decolar, todos os celulares tocaram ao mesmo tempo com o mesmo som." }
+];
 
 const QUESTIONS = [
   { q: "Qual aplicativo você mais usa no celular?", c: "Apps de mensagem" },
@@ -1091,7 +1120,7 @@ const THEMES = {
    STATE
    ───────────────────────────────────────────── */
 const state = {
-  mode: "palavra",        // "palavra" | "perguntas"
+  mode: "palavra",        // "palavra" | "perguntas" | "historia"
   players: [],            // [{id, name}]
   themeKey: null,
   impostorCount: 1,
@@ -1100,6 +1129,7 @@ const state = {
   roundNo: 1,
   word: null,             // word OR null
   question: null,         // {q, c} OR null
+  story: null,            // {t, p} OR null
   impostorIds: [],
   shuffledOrder: [],      // for reveal phase (shuffle so adjacent guesses aren't predictable)
   revealIdx: 0,
@@ -1321,8 +1351,8 @@ function syncCTA(){
   startBtn.disabled = !ok;
   syncImpostor();
   const modeName = MODES[state.mode].label;
-  const themeName = needsTheme ? (state.themeKey ? THEMES[state.themeKey].label : "Sem tema") : "—";
-  footHint.textContent = `${state.players.length} jogador${state.players.length===1?"":"es"} · ${modeName}${needsTheme?` · ${themeName}`:""} · ${state.impostorCount} impostor${state.impostorCount===1?"":"es"}`;
+  const detail = needsTheme ? (state.themeKey ? THEMES[state.themeKey].label : "Sem tema") : "";
+  footHint.textContent = `${state.players.length} jogador${state.players.length===1?"":"es"} · ${modeName}${detail?` · ${detail}`:""} · ${state.impostorCount} impostor${state.impostorCount===1?"":"es"}`;
 }
 
 /* ─────────────────────────────────────────────
@@ -1330,13 +1360,14 @@ function syncCTA(){
    ───────────────────────────────────────────── */
 function startRound(){
   if(state.players.length < 3) return;
+  state.word = null; state.question = null; state.story = null;
   if(state.mode === "palavra"){
     if(!state.themeKey) return;
     state.word = pickRandom(THEMES[state.themeKey].words);
-    state.question = null;
-  } else {
+  } else if(state.mode === "perguntas"){
     state.question = pickRandom(QUESTIONS);
-    state.word = null;
+  } else if(state.mode === "historia"){
+    state.story = pickRandom(STORIES);
   }
   state.impostorIds = pickN(state.players.map(p=>p.id), state.impostorCount);
   state.shuffledOrder = shuffle([...state.players]);
@@ -1392,14 +1423,17 @@ function doReveal(){
   const isImpostor = state.impostorIds.includes(player.id);
   const counter = revealCounter.textContent;
   const isQuestionMode = state.mode === "perguntas";
-  const themeName = isQuestionMode ? "Perguntas" : THEMES[state.themeKey].label;
+  const themeName = state.mode === "palavra" ? THEMES[state.themeKey].label : MODES[state.mode].label;
 
+  const isStoryMode = state.mode === "historia";
   let cardClass, cardHTML;
   if(isImpostor){
     const eyebrow = "Você é";
     const title = `Impostor<span class="pt">.</span>`;
     let sub;
-    if(isQuestionMode){
+    if(isStoryMode){
+      sub = `Você nunca leu o início. Quando for sua vez, continue a história sem entregar que não sabe.`;
+    } else if(isQuestionMode){
       sub = `Você não sabe a pergunta dos outros. Responda algo <b>vago</b> e tente se misturar.`;
     } else if(state.hintForImpostor){
       sub = `Tema: <b>${escapeHTML(themeName)}</b>. Tente se misturar — sem saber a palavra exata.`;
@@ -1425,7 +1459,14 @@ function doReveal(){
     `;
   } else {
     let eyebrow, title, sub, suit, idx, titleClass;
-    if(isQuestionMode){
+    if(isStoryMode){
+      const sObj = state.story;
+      eyebrow = `Capítulo · ${escapeHTML(sObj.t)}`;
+      title = `${escapeHTML(sObj.p)}`;
+      sub = `Quando for sua vez, continue a história com uma frase.`;
+      suit = "§"; idx = "HC";
+      titleClass = "card-title long";
+    } else if(isQuestionMode){
       const qObj = state.question;
       eyebrow = "Sua pergunta";
       title = `${escapeHTML(qObj.q)}`;
@@ -1481,10 +1522,29 @@ function enterGame(){
   state.turnIdx = 0;
   showScreen("game");
   roundLabel.textContent = `Rodada ${String(state.roundNo).padStart(2,"0")}`;
-  if(state.mode === "perguntas"){
+  if(state.mode === "palavra"){
+    gameThemeEl.textContent = `Tema · ${THEMES[state.themeKey].label}`;
+  } else if(state.mode === "perguntas"){
     gameThemeEl.textContent = `Modo · Perguntas`;
   } else {
-    gameThemeEl.textContent = `Tema · ${THEMES[state.themeKey].label}`;
+    gameThemeEl.textContent = `Modo · História`;
+  }
+  // update turn instruction per mode
+  const meta = document.getElementById("turnMeta");
+  if(meta){
+    if(state.mode === "palavra"){
+      meta.textContent = "Diga uma palavra ou frase curta relacionada à palavra secreta. Sem entregá-la, sem mentir.";
+    } else if(state.mode === "perguntas"){
+      meta.textContent = "Responda à pergunta de forma vaga e sutil. O impostor está observando.";
+    } else {
+      meta.textContent = "Adicione uma frase à história. Sem reabrir o início — sem entregar o impostor.";
+    }
+  }
+  const small = document.getElementById("turnEyebrow");
+  if(small){
+    if(state.mode === "historia") small.textContent = "Vez de continuar a história";
+    else if(state.mode === "perguntas") small.textContent = "Vez de responder";
+    else small.textContent = "Vez de dar a dica";
   }
   renderTurn();
 }
@@ -1511,6 +1571,11 @@ function endRound(){
     resultTheme.textContent = `Modo · Perguntas`;
     document.getElementById("resultWordLabel").textContent = "A pergunta era";
     resultWord.innerHTML = `${escapeHTML(state.question.q)}`;
+    resultWord.classList.add("long");
+  } else if(state.mode === "historia"){
+    resultTheme.textContent = `Modo · História — ${escapeHTML(state.story.t)}`;
+    document.getElementById("resultWordLabel").textContent = "A história começava com";
+    resultWord.innerHTML = `${escapeHTML(state.story.p)}`;
     resultWord.classList.add("long");
   } else {
     resultTheme.textContent = `Tema · ${THEMES[state.themeKey].label}`;
