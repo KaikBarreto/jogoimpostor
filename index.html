@@ -115,7 +115,46 @@
     font-variation-settings:"opsz" 144, "SOFT" 50;
   }
   .hero h1 em{font-style:normal;font-weight:200}
-  .hero h1 .pt{display:inline-block;color:var(--accent);transform:translateY(-.05em)}
+  .hero h1 .pt{display:inline-block;color:var(--accent);transform:translateY(-.05em);transition:opacity .35s ease}
+  .hero h1 .typed{display:inline}
+  .hero h1 .caret{
+    display:inline-block;
+    color:var(--accent);
+    font-weight:100;
+    font-style:italic;
+    animation:caret-blink 1s steps(2) infinite;
+    margin-left:-.04em;
+    transform:translateY(-.04em);
+  }
+  @keyframes caret-blink{50%{opacity:0}}
+  .hero h1.shimmer .typed{
+    background:linear-gradient(
+      100deg,
+      #f3efe6 0%,
+      #f3efe6 30%,
+      #c9c2b3 47%,
+      #fffaee 52%,
+      #c9c2b3 57%,
+      #f3efe6 70%,
+      #f3efe6 100%
+    );
+    background-size:280% 100%;
+    background-position:110% 50%;
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    color:transparent;
+    animation:hero-shimmer 9s ease-in-out infinite;
+  }
+  @keyframes hero-shimmer{
+    0%   {background-position:120% 50%}
+    50%  {background-position:-30% 50%}
+    100% {background-position:-200% 50%}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .hero h1 .caret{animation:none;opacity:.4}
+    .hero h1.shimmer .typed{animation:none}
+  }
   .hero .lede{
     font-family:var(--serif);
     font-weight:300;
@@ -822,7 +861,7 @@
       <span>Um Jogo Social — Local · Off-line</span>
       <span>Para 3 a 16 jogadores</span>
     </div>
-    <h1 class="anim-2">O Impostor<span class="pt">.</span></h1>
+    <h1 id="heroTitle"><span class="typed"></span><span class="caret">|</span><span class="pt" style="opacity:0">.</span></h1>
     <p class="lede anim-3">
       Cadastre os jogadores, escolha o modo e <b>passe o celular</b>. Cada um descobre, em segredo, a palavra ou a pergunta da rodada. Um deles, porém, recebe apenas uma sentença<span class="pt">:</span> <em>você é o impostor</em>. Disfarce. Deduza. Acuse.
     </p>
@@ -1256,6 +1295,39 @@ function init(){
   syncCTA();
   // observe scroll reveals on the initial setup screen
   observeScrollReveals(setupScreen);
+  // type out the hero title and start the fluid shimmer
+  typeHero();
+}
+
+function typeHero(){
+  const h1 = document.getElementById("heroTitle");
+  if(!h1) return;
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const text = "O Impostor";
+  const typed = h1.querySelector(".typed");
+  const caret = h1.querySelector(".caret");
+  const pt = h1.querySelector(".pt");
+  if(reduce){
+    typed.textContent = text;
+    if(caret) caret.remove();
+    pt.style.opacity = "1";
+    h1.classList.add("shimmer");
+    return;
+  }
+  let i = 0;
+  const advance = () => {
+    typed.textContent = text.substring(0, ++i);
+    if(i < text.length){
+      setTimeout(advance, 90 + Math.random() * 70);
+    } else {
+      setTimeout(() => { pt.style.opacity = "1"; }, 220);
+      setTimeout(() => {
+        if(caret) caret.remove();
+        h1.classList.add("shimmer");
+      }, 720);
+    }
+  };
+  setTimeout(advance, 280);
 }
 
 /* ─────────────────────────────────────────────
