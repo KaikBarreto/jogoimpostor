@@ -3,3 +3,6 @@ node_modules/
 .vscode/
 .idea/
 *.log
+dist/
+.vercel/
+_legacy.html
