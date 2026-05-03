@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>O Impostor — um jogo social</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink: #f3efe6;
+    --ink-dim: #8a857a;
+    --ink-faint: #3a372f;
+    --paper: #0b0b0a;
+    --paper-2: #111110;
+    --rule: #2a2823;
+    --warn: #ff3b1f;
+    --serif: "Fraunces", "Times New Roman", serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+    --max: 1140px;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--paper);color:var(--ink);min-height:100%}
+  body{
+    font-family:var(--mono);
+    font-size:14px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  /* grain overlay */
+  body::before{
+    content:"";
+    position:fixed;inset:0;
+    pointer-events:none;
+    z-index:1000;
+    opacity:.06;
+    mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.55 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+  /* vignette */
+  body::after{
+    content:"";
+    position:fixed;inset:0;
+    pointer-events:none;z-index:999;
+    background:radial-gradient(120% 80% at 50% 0%, transparent 50%, rgba(0,0,0,.55) 100%);
+  }
+
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  input{font:inherit;color:inherit;background:none;border:0;outline:0}
+
+  /* — layout — */
+  .frame{
+    max-width:var(--max);
+    margin:0 auto;
+    padding:28px 28px 80px;
+    position:relative;
+    z-index:2;
+  }
+  @media(max-width:640px){ .frame{padding:20px 18px 60px} }
+
+  /* — masthead — */
+  .mast{
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    align-items:center;
+    gap:20px;
+    padding:14px 0;
+    border-bottom:1px solid var(--rule);
+    font-family:var(--mono);
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.18em;
+    color:var(--ink-dim);
+  }
+  .mast .l{justify-self:start}
+  .mast .c{justify-self:center}
+  .mast .r{justify-self:end}
+  .mast .dot{display:inline-block;width:6px;height:6px;background:var(--ink);border-radius:50%;margin:0 6px;vertical-align:middle;animation:pulse 2.4s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+
+  /* — hero — */
+  .hero{
+    padding:54px 0 38px;
+    border-bottom:1px solid var(--rule);
+    display:grid;
+    grid-template-columns:1fr;
+    gap:18px;
+  }
+  .hero .meta{
+    display:flex;justify-content:space-between;align-items:end;
+    font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-dim);
+  }
+  .hero h1{
+    font-family:var(--serif);
+    font-weight:300;
+    font-style:italic;
+    font-size:clamp(64px, 13vw, 188px);
+    line-height:.88;
+    letter-spacing:-.04em;
+    font-variation-settings:"opsz" 144, "SOFT" 50;
+  }
+  .hero h1 em{font-style:normal;font-weight:200}
+  .hero h1 .pt{display:inline-block;color:var(--ink-dim);transform:translateY(-.05em)}
+  .hero .lede{
+    font-family:var(--serif);
+    font-weight:300;
+    font-style:italic;
+    font-size:clamp(18px, 2vw, 22px);
+    line-height:1.45;
+    color:var(--ink);
+    max-width:62ch;
+    padding-top:6px;
+  }
+  .hero .lede b{font-style:normal;font-weight:500;letter-spacing:.02em}
+
+  /* — sections — */
+  .section{
+    padding:42px 0;
+    border-bottom:1px solid var(--rule);
+    display:grid;
+    grid-template-columns:120px 1fr;
+    gap:32px;
+  }
+  @media(max-width:720px){
+    .section{grid-template-columns:1fr;gap:14px}
+  }
+  .sec-no{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--ink-dim);
+  }
+  .sec-no .num{color:var(--ink);font-weight:500}
+  .sec-body{display:grid;gap:18px}
+
+  .sec-head{
+    display:flex;justify-content:space-between;align-items:baseline;gap:16px;
+    border-bottom:1px dashed var(--rule);
+    padding-bottom:12px;
+  }
+  .sec-head h2{
+    font-family:var(--serif);
+    font-weight:400;
+    font-style:italic;
+    font-size:clamp(28px, 4vw, 44px);
+    line-height:1;
+    letter-spacing:-.02em;
+  }
+  .sec-head .tag{
+    font-family:var(--mono);font-size:11px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink-dim);
+    white-space:nowrap;
+  }
+  .sec-head .tag b{color:var(--ink);font-weight:500}
+
+  /* — players input — */
+  .player-input{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:0;
+    border:1px solid var(--rule);
+  }
+  .player-input input{
+    padding:18px 20px;
+    font-family:var(--serif);
+    font-size:22px;
+    font-style:italic;
+    font-weight:300;
+  }
+  .player-input input::placeholder{color:var(--ink-faint);font-style:italic}
+  .player-input button{
+    padding:0 22px;
+    border-left:1px solid var(--rule);
+    font-family:var(--mono);
+    font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    background:var(--ink);color:var(--paper);
+    transition:background .2s, color .2s;
+  }
+  .player-input button:hover{background:var(--ink-dim)}
+  .player-input button:disabled{background:var(--rule);color:var(--ink-faint);cursor:not-allowed}
+
+  .players{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0,1fr));
+    gap:0;
+    border-top:1px solid var(--rule);
+  }
+  @media(max-width:560px){.players{grid-template-columns:1fr}}
+  .player{
+    display:grid;
+    grid-template-columns:36px 1fr auto;
+    align-items:center;
+    gap:12px;
+    padding:14px 16px;
+    border-bottom:1px solid var(--rule);
+    border-right:1px solid var(--rule);
+  }
+  .players .player:nth-child(2n){border-right:0}
+  @media(max-width:560px){.players .player{border-right:0}}
+  .player .pno{
+    font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--ink-dim);
+  }
+  .player .pname{
+    font-family:var(--serif);font-style:italic;font-weight:300;font-size:22px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .player .px{
+    font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--ink-dim);padding:6px 8px;
+    transition:color .15s;
+  }
+  .player .px:hover{color:var(--warn)}
+  .empty-note{
+    padding:22px 0;color:var(--ink-dim);
+    font-family:var(--serif);font-style:italic;font-size:18px;
+  }
+
+  /* — themes grid — */
+  .themes{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:0;
+    border:1px solid var(--rule);
+  }
+  @media(max-width:780px){.themes{grid-template-columns:repeat(2,1fr)}}
+  .theme{
+    padding:22px 18px;
+    border-right:1px solid var(--rule);
+    border-bottom:1px solid var(--rule);
+    text-align:left;
+    transition:background .15s, color .15s;
+    display:grid;gap:6px;
+    position:relative;
+  }
+  .theme:nth-child(4n){border-right:0}
+  .theme:nth-last-child(-n+4){border-bottom:0}
+  @media(max-width:780px){
+    .theme:nth-child(4n){border-right:1px solid var(--rule)}
+    .theme:nth-child(2n){border-right:0}
+    .theme:nth-last-child(-n+4){border-bottom:1px solid var(--rule)}
+    .theme:nth-last-child(-n+2){border-bottom:0}
+  }
+  .theme .tno{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--ink-dim);text-transform:uppercase}
+  .theme .tname{font-family:var(--serif);font-style:italic;font-weight:300;font-size:26px;line-height:1.05}
+  .theme .tcount{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--ink-faint);text-transform:uppercase}
+  .theme:hover{background:var(--paper-2)}
+  .theme:hover .tno{color:var(--ink)}
+  .theme.active{background:var(--ink);color:var(--paper)}
+  .theme.active .tno,.theme.active .tcount{color:var(--paper);opacity:.7}
+
+  /* — settings — */
+  .setting-row{
+    display:flex;justify-content:space-between;align-items:center;
+    border:1px solid var(--rule);
+    padding:18px 20px;
+  }
+  .setting-row .lbl{
+    font-family:var(--serif);font-style:italic;font-weight:300;font-size:22px;
+  }
+  .setting-row .hint{
+    font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--ink-dim);text-transform:uppercase;
+    margin-top:2px;
+  }
+  .setting-row .lblwrap{display:grid;gap:2px}
+  .stepper{display:flex;align-items:center;border:1px solid var(--rule)}
+  .stepper button{
+    width:42px;height:42px;
+    font-family:var(--mono);font-size:16px;color:var(--ink);
+    transition:background .15s, color .15s;
+  }
+  .stepper button:hover{background:var(--ink);color:var(--paper)}
+  .stepper button:disabled{color:var(--ink-faint);cursor:not-allowed;background:transparent}
+  .stepper .val{
+    width:54px;text-align:center;
+    font-family:var(--serif);font-style:italic;font-size:24px;font-weight:300;
+    border-left:1px solid var(--rule);border-right:1px solid var(--rule);
+    line-height:42px;
+  }
+
+  /* — start cta — */
+  .cta-row{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:0;
+    margin-top:8px;
+  }
+  .cta{
+    width:100%;
+    padding:28px 24px;
+    background:var(--ink);color:var(--paper);
+    display:flex;align-items:center;justify-content:space-between;gap:24px;
+    transition:background .2s, color .2s, transform .2s;
+  }
+  .cta:hover:not(:disabled){background:var(--paper);color:var(--ink);outline:1px solid var(--ink);outline-offset:-1px}
+  .cta:disabled{background:var(--paper-2);color:var(--ink-faint);cursor:not-allowed}
+  .cta .lbl{
+    font-family:var(--serif);font-style:italic;font-weight:300;
+    font-size:clamp(28px,4vw,44px);line-height:1;letter-spacing:-.02em;
+  }
+  .cta .arr{
+    font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    transition:transform .25s;
+  }
+  .cta:hover:not(:disabled) .arr{transform:translateX(6px)}
+
+  /* — colophon — */
+  .colophon{
+    padding:28px 0 0;
+    display:flex;justify-content:space-between;align-items:center;gap:16px;
+    font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-dim);
+  }
+  .colophon .rule{flex:1;height:1px;background:var(--rule)}
+
+  /* —————— REVEAL SCREEN —————— */
+  .reveal-wrap{
+    min-height:100vh;
+    display:grid;
+    grid-template-rows:auto 1fr auto;
+    padding:24px;
+  }
+  .reveal-top{
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-dim);
+    border-bottom:1px solid var(--rule);
+    padding-bottom:14px;
+  }
+  .reveal-top button{color:var(--ink-dim);transition:color .15s}
+  .reveal-top button:hover{color:var(--ink)}
+  .progress{
+    display:flex;gap:4px;align-items:center;
+  }
+  .progress .seg{width:20px;height:2px;background:var(--rule)}
+  .progress .seg.done{background:var(--ink)}
+  .progress .seg.curr{background:var(--ink);animation:pulse 1.6s infinite}
+
+  .reveal-stage{
+    display:grid;place-items:center;
+    padding:40px 16px;
+  }
+  .reveal-card{
+    width:100%;max-width:560px;
+    aspect-ratio: 3/4;
+    max-height:78vh;
+    border:1px solid var(--rule);
+    background:var(--paper);
+    display:grid;place-items:center;
+    text-align:center;
+    padding:36px;
+    position:relative;
+    transition:background .35s, color .35s, border-color .35s;
+    cursor:pointer;
+    overflow:hidden;
+  }
+  .reveal-card.front:hover{background:var(--paper-2)}
+  .reveal-card.front .who{
+    font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);
+    position:absolute;top:24px;left:24px;
+  }
+  .reveal-card.front .num{
+    font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);
+    position:absolute;top:24px;right:24px;
+  }
+  .reveal-card.front .name{
+    font-family:var(--serif);font-style:italic;font-weight:200;
+    font-size:clamp(48px, 9vw, 96px);
+    line-height:.95;letter-spacing:-.03em;
+    margin-bottom:18px;
+  }
+  .reveal-card.front .name .pt{color:var(--ink-dim)}
+  .reveal-card.front .tap{
+    font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-dim);
+    border:1px solid var(--rule);
+    padding:14px 22px;
+    margin-top:10px;
+    transition:background .15s, color .15s, border-color .15s;
+  }
+  .reveal-card.front:hover .tap{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .reveal-card.front .corner{
+    position:absolute;
+    font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--ink-faint);
+  }
+  .reveal-card.front .corner.bl{bottom:24px;left:24px}
+  .reveal-card.front .corner.br{bottom:24px;right:24px}
+
+  /* — back: word — */
+  .reveal-card.back-word{
+    background:var(--paper);color:var(--ink);
+    cursor:default;
+    border:1px solid var(--ink);
+  }
+  .reveal-card.back-word .label{
+    font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);
+    position:absolute;top:24px;left:24px;
+  }
+  .reveal-card.back-word .theme-tag{
+    font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);
+    position:absolute;top:24px;right:24px;
+  }
+  .reveal-card.back-word .word{
+    font-family:var(--serif);font-style:italic;font-weight:200;
+    font-size:clamp(56px, 12vw, 132px);
+    line-height:.9;letter-spacing:-.04em;
+    padding:0 8px;
+    word-break:break-word;
+  }
+  .reveal-card.back-word .word .pt{color:var(--ink-dim)}
+  .reveal-card.back-word .hint{
+    font-family:var(--serif);font-style:italic;font-weight:300;font-size:18px;color:var(--ink-dim);
+    position:absolute;bottom:78px;left:24px;right:24px;
+    line-height:1.4;
+  }
+  .reveal-card.back-word .hide{
+    position:absolute;bottom:24px;left:24px;right:24px;
+    border:1px solid var(--rule);
+    padding:14px 18px;
+    font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--ink);
+    transition:background .15s, color .15s;
+  }
+  .reveal-card.back-word .hide:hover{background:var(--ink);color:var(--paper)}
+
+  /* — back: impostor (inverted) — */
+  .reveal-card.back-impostor{
+    background:var(--ink);color:var(--paper);
+    border:1px solid var(--ink);
+    cursor:default;
+  }
+  .reveal-card.back-impostor .label{
+    font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#5a554a;
+    position:absolute;top:24px;left:24px;
+  }
+  .reveal-card.back-impostor .theme-tag{
+    font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#5a554a;
+    position:absolute;top:24px;right:24px;
+  }
+  .reveal-card.back-impostor .word{
+    font-family:var(--serif);font-style:italic;font-weight:200;
+    font-size:clamp(56px, 11vw, 122px);
+    line-height:.9;letter-spacing:-.04em;
+  }
+  .reveal-card.back-impostor .word .pt{color:#5a554a}
+  .reveal-card.back-impostor .hint{
+    font-family:var(--serif);font-style:italic;font-weight:300;font-size:18px;color:#5a554a;
+    position:absolute;bottom:78px;left:24px;right:24px;
+    line-height:1.4;
+  }
+  .reveal-card.back-impostor .hide{
+    position:absolute;bottom:24px;left:24px;right:24px;
+    border:1px solid #5a554a;
+    padding:14px 18px;
+    font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--paper);
+    transition:background .15s, color .15s, border-color .15s;
+  }
+  .reveal-card.back-impostor .hide:hover{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+
+  .reveal-bottom{
+    text-align:center;
+    padding-top:18px;
+    border-top:1px solid var(--rule);
+    font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--ink-dim);text-transform:uppercase;
+  }
+
+  /* — game / discussion — */
+  .game-wrap{padding:24px}
+  .game-head{
+    border-bottom:1px solid var(--rule);
+    padding-bottom:14px;
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-dim);
+  }
+  .game-head button{color:var(--ink-dim);transition:color .15s}
+  .game-head button:hover{color:var(--ink)}
+  .game-body{
+    padding:60px 0 40px;
+    display:grid;gap:32px;
+    max-width:760px;margin:0 auto;
+  }
+  .order-list{
+    display:grid;gap:0;
+    border-top:1px solid var(--rule);
+  }
+  .order-item{
+    display:grid;
+    grid-template-columns:60px 1fr auto;
+    align-items:center;gap:14px;
+    padding:18px 4px;
+    border-bottom:1px solid var(--rule);
+  }
+  .order-item .ono{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--ink-dim);text-transform:uppercase}
+  .order-item .oname{font-family:var(--serif);font-style:italic;font-weight:300;font-size:28px}
+  .order-item .ostate{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--ink-faint);text-transform:uppercase}
+  .order-item.active{background:var(--paper-2)}
+  .order-item.active .oname{color:var(--ink)}
+  .order-item.active .ostate{color:var(--ink)}
+
+  .game-prompt{
+    text-align:center;
+    padding:40px 16px;
+    border:1px solid var(--rule);
+  }
+  .game-prompt .small{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim)}
+  .game-prompt .big{
+    font-family:var(--serif);font-style:italic;font-weight:200;
+    font-size:clamp(48px, 9vw, 96px);line-height:.95;letter-spacing:-.03em;margin-top:6px;
+  }
+  .game-prompt .big .pt{color:var(--ink-dim)}
+  .game-prompt .meta{font-family:var(--serif);font-style:italic;font-weight:300;font-size:18px;color:var(--ink-dim);margin-top:14px}
+
+  .game-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:0;
+  }
+  @media(max-width:540px){.game-actions{grid-template-columns:1fr}}
+  .gbtn{
+    padding:24px 22px;
+    border:1px solid var(--rule);
+    text-align:left;
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
+    transition:background .15s, color .15s;
+  }
+  .gbtn .l{font-family:var(--serif);font-style:italic;font-weight:300;font-size:22px}
+  .gbtn .a{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--ink-dim);text-transform:uppercase}
+  .gbtn:hover{background:var(--ink);color:var(--paper)}
+  .gbtn:hover .a{color:var(--paper)}
+  .gbtn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .gbtn.primary .a{color:var(--paper)}
+  .gbtn.primary:hover{background:var(--paper);color:var(--ink)}
+  .gbtn.primary:hover .a{color:var(--ink)}
+
+  /* — result — */
+  .result-card{
+    border:1px solid var(--rule);
+    padding:48px 36px;
+    text-align:left;
+    display:grid;gap:20px;
+  }
+  .result-row{display:grid;gap:6px;border-bottom:1px dashed var(--rule);padding-bottom:18px}
+  .result-row:last-of-type{border-bottom:0;padding-bottom:0}
+  .result-row .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim)}
+  .result-row .val{
+    font-family:var(--serif);font-style:italic;font-weight:200;
+    font-size:clamp(40px,7vw,76px);line-height:.95;letter-spacing:-.03em;
+  }
+  .result-row .val .pt{color:var(--ink-dim)}
+  .result-row .small{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--ink-dim);text-transform:uppercase;margin-top:6px}
+
+  /* — animations — */
+  @keyframes fadeUp{
+    from{opacity:0;transform:translateY(14px)}
+    to{opacity:1;transform:none}
+  }
+  @keyframes fadeIn{
+    from{opacity:0}to{opacity:1}
+  }
+  .anim-1{animation:fadeUp .9s cubic-bezier(.2,.7,.2,1) both;animation-delay:.05s}
+  .anim-2{animation:fadeUp .9s cubic-bezier(.2,.7,.2,1) both;animation-delay:.18s}
+  .anim-3{animation:fadeUp .9s cubic-bezier(.2,.7,.2,1) both;animation-delay:.32s}
+  .anim-4{animation:fadeUp .9s cubic-bezier(.2,.7,.2,1) both;animation-delay:.46s}
+  .anim-5{animation:fadeUp .9s cubic-bezier(.2,.7,.2,1) both;animation-delay:.6s}
+  .anim-6{animation:fadeUp .9s cubic-bezier(.2,.7,.2,1) both;animation-delay:.74s}
+
+  /* — utilities — */
+  .hide{display:none !important}
+  .ital{font-style:italic;font-family:var(--serif);font-weight:300}
+  .focus-outline:focus-visible{outline:1px solid var(--ink);outline-offset:2px}
+
+  /* selection */
+  ::selection{background:var(--ink);color:var(--paper)}
+</style>
+</head>
+<body>
+
+<!-- ============== SETUP SCREEN ============== -->
+<main id="setupScreen" class="frame">
+
+  <header class="mast">
+    <div class="l">N°01 / Edição 2026</div>
+    <div class="c"><span class="dot"></span>Sessão ao vivo<span class="dot"></span></div>
+    <div class="r">PT — BR</div>
+  </header>
+
+  <section class="hero">
+    <div class="meta anim-1">
+      <span>Um Jogo Social — Local · Off-line</span>
+      <span>Para 3 a 16 jogadores</span>
+    </div>
+    <h1 class="anim-2">O Impostor<span class="pt">.</span></h1>
+    <p class="lede anim-3">
+      Cadastre os jogadores, escolha um tema e <b>passe o celular</b>. Cada um descobre, em segredo, a palavra da rodada. Um deles, porém, recebe apenas uma sentença<span class="pt">:</span> <em>você é o impostor</em>. Disfarce. Deduza. Acuse.
+    </p>
+  </section>
+
+  <section class="section anim-4" id="playersSection">
+    <div class="sec-no">Cap. <span class="num">01</span> — Elenco</div>
+    <div class="sec-body">
+      <div class="sec-head">
+        <h2>Os jogadores<span class="pt" style="color:var(--ink-dim)">.</span></h2>
+        <div class="tag">Total <b id="playerCount">0</b> · Mín. 3 · Máx. 16</div>
+      </div>
+
+      <form class="player-input" id="playerForm" autocomplete="off">
+        <input id="playerName" type="text" placeholder="Nome do próximo jogador…" maxlength="22" />
+        <button id="addBtn" type="submit" disabled>Adicionar +</button>
+      </form>
+
+      <div id="playersList" class="players hide"></div>
+      <p id="emptyNote" class="empty-note">Nenhum jogador adicionado ainda. Comece pelo seu nome.</p>
+    </div>
+  </section>
+
+  <section class="section anim-5">
+    <div class="sec-no">Cap. <span class="num">02</span> — Universo</div>
+    <div class="sec-body">
+      <div class="sec-head">
+        <h2>Tema da rodada<span class="pt" style="color:var(--ink-dim)">.</span></h2>
+        <div class="tag">Selecionado · <b id="themeLabel">—</b></div>
+      </div>
+      <div id="themesGrid" class="themes"></div>
+    </div>
+  </section>
+
+  <section class="section anim-6">
+    <div class="sec-no">Cap. <span class="num">03</span> — Regras</div>
+    <div class="sec-body">
+      <div class="sec-head">
+        <h2>Configurações<span class="pt" style="color:var(--ink-dim)">.</span></h2>
+        <div class="tag">Ajuste a partida</div>
+      </div>
+
+      <div class="setting-row">
+        <div class="lblwrap">
+          <span class="lbl">Quantos impostores?</span>
+          <span class="hint">Recomendado · 1 para 3–6 · 2 para 7+</span>
+        </div>
+        <div class="stepper" id="impostorStepper">
+          <button type="button" data-d="-1" aria-label="Menos">−</button>
+          <span class="val" id="impostorVal">1</span>
+          <button type="button" data-d="1" aria-label="Mais">+</button>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <div class="lblwrap">
+          <span class="lbl">Mostrar dica para o impostor?</span>
+          <span class="hint">Mostra apenas o tema, sem a palavra</span>
+        </div>
+        <div class="stepper" id="hintToggle" role="group">
+          <button type="button" data-v="off" id="hintOff" class="hint-btn">Não</button>
+          <button type="button" data-v="on" id="hintOn" class="hint-btn">Sim</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-row">
+    <button id="startBtn" class="cta" disabled>
+      <span class="lbl">Iniciar a rodada<span style="color:var(--ink-dim)">.</span></span>
+      <span class="arr">PASSAR O CELULAR →</span>
+    </button>
+  </section>
+
+  <footer class="colophon">
+    <span>© Edição local</span>
+    <span class="rule"></span>
+    <span id="footHint">3 jogadores · Sem tema · 1 impostor</span>
+  </footer>
+</main>
+
+<!-- ============== REVEAL SCREEN ============== -->
+<main id="revealScreen" class="reveal-wrap hide">
+  <div class="reveal-top">
+    <button id="revealBack" type="button">← Voltar ao elenco</button>
+    <div class="progress" id="progressTrack"></div>
+    <div><span id="revealCounter">01/03</span></div>
+  </div>
+
+  <div class="reveal-stage">
+    <div id="revealCard" class="reveal-card front">
+      <span class="who">Passando para</span>
+      <span class="num" id="revealCardNum">01/03</span>
+      <span class="name" id="revealName">—<span class="pt">.</span></span>
+      <button type="button" class="tap" id="tapToReveal">Tocar para revelar</button>
+      <span class="corner bl">Discrição</span>
+      <span class="corner br">Não mostre a ninguém</span>
+    </div>
+  </div>
+
+  <div class="reveal-bottom">
+    Mantenha o celular próximo · Apenas você deve ver
+  </div>
+</main>
+
+<!-- ============== GAME SCREEN ============== -->
+<main id="gameScreen" class="game-wrap hide">
+  <div class="game-head">
+    <button id="gameBack" type="button">← Encerrar rodada</button>
+    <span>Discussão · <span id="roundLabel">Rodada 01</span></span>
+    <span id="gameTheme">— · —</span>
+  </div>
+
+  <div class="game-body">
+    <div class="game-prompt">
+      <span class="small">Vez de dar a dica</span>
+      <div class="big" id="turnName">—<span class="pt">.</span></div>
+      <div class="meta ital">Diga uma palavra ou frase curta relacionada à palavra secreta. Sem entregá-la, sem mentir.</div>
+    </div>
+
+    <div class="order-list" id="orderList"></div>
+
+    <div class="game-actions">
+      <button class="gbtn" id="nextTurn">
+        <span class="l">Próximo a falar</span>
+        <span class="a">PRÓXIMO →</span>
+      </button>
+      <button class="gbtn primary" id="endRound">
+        <span class="l">Encerrar e revelar</span>
+        <span class="a">REVELAR ↘</span>
+      </button>
+    </div>
+  </div>
+</main>
+
+<!-- ============== RESULT SCREEN ============== -->
+<main id="resultScreen" class="frame hide">
+  <header class="mast">
+    <div class="l">Fim da Rodada</div>
+    <div class="c"><span class="dot"></span>Veredito<span class="dot"></span></div>
+    <div class="r">N°<span id="resultRound">01</span></div>
+  </header>
+
+  <section class="hero">
+    <div class="meta anim-1">
+      <span>Resultado · Reveal final</span>
+      <span id="resultTheme">Tema · —</span>
+    </div>
+    <h1 class="anim-2" style="font-size:clamp(48px,10vw,140px)">Veredito<span class="pt">.</span></h1>
+    <p class="lede anim-3">A palavra é revelada. O impostor é apontado. Discutam o que entregou e joguem novamente.</p>
+  </section>
+
+  <section class="section anim-4">
+    <div class="sec-no">Cap. <span class="num">∞</span> — Reveal</div>
+    <div class="sec-body">
+      <div class="result-card">
+        <div class="result-row">
+          <span class="lbl">A palavra secreta era</span>
+          <span class="val" id="resultWord">—<span class="pt">.</span></span>
+        </div>
+        <div class="result-row">
+          <span class="lbl" id="resultImpostorLabel">O impostor era</span>
+          <span class="val" id="resultImpostors">—<span class="pt">.</span></span>
+          <span class="small">Aplaudam, ridicularizem, joguem novamente.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-row" style="grid-template-columns:1fr 1fr;gap:0">
+    <button id="playAgainBtn" class="cta" style="background:var(--paper);color:var(--ink);outline:1px solid var(--ink);outline-offset:-1px">
+      <span class="lbl">Nova rodada<span style="color:var(--ink-dim)">.</span></span>
+      <span class="arr">REEMBARALHAR ↻</span>
+    </button>
+    <button id="newGameBtn" class="cta">
+      <span class="lbl">Recomeçar tudo<span style="color:var(--ink-dim)">.</span></span>
+      <span class="arr">VOLTAR AO ELENCO →</span>
+    </button>
+  </section>
+
+  <footer class="colophon">
+    <span>© Edição local</span>
+    <span class="rule"></span>
+    <span>Boa sorte na próxima.</span>
+  </footer>
+</main>
+
+<script>
+/* ─────────────────────────────────────────────
+   THEMES & WORDS
+   ───────────────────────────────────────────── */
+const THEMES = {
+  minecraft: {
+    label: "Minecraft",
+    desc: "Bloco, mob e bioma",
+    words: ["Creeper","Enderman","Steve","Alex","Diamante","Esmeralda","Picareta","Lava","Portal do Nether","Aldeão","Zumbi","Esqueleto","Ender Dragon","Wither","Vila","End","Cama","Tocha","TNT","Cavalo","Ovelha","Galinha","Vaca","Lobo","Gato","Lapis Lazuli","Obsidiana","Bedrock","Bússola","Mapa","Encantamento","Bigorna","Mesa de Trabalho","Forno","Báu","Slime","Ghast","Blaze","Withersmen","Allay"]
+  },
+  anime: {
+    label: "Anime",
+    desc: "Heróis e vilões",
+    words: ["Naruto","Goku","Luffy","Eren Yeager","Levi","Saitama","Tanjiro","Light Yagami","Kakashi","Vegeta","Itachi","Zoro","Sasuke","Ichigo","Edward Elric","Mikasa","Jotaro","All Might","Senku","Sukuna","Gojo","Yusuke","Killua","Gon","Asta","Deku","Bakugo","Rem","Asuna","Kirito","Lelouch","L","Shinji","Inuyasha","Goten","Kenshin","Megumin","Spike Spiegel","Roronoa","Madara"]
+  },
+  futebol: {
+    label: "Futebol",
+    desc: "Lendas em campo",
+    words: ["Pelé","Messi","Cristiano Ronaldo","Neymar","Mbappé","Ronaldinho","Maradona","Zidane","Ronaldo Fenômeno","Vinicius Júnior","Haaland","Modric","Iniesta","Xavi","Beckham","Romário","Rivaldo","Cafu","Garrincha","Buffon","Kaká","Lewandowski","Salah","Benzema","Suarez","Ibrahimović","Pirlo","Casillas","Roberto Carlos","Ronaldo Nazário","Thiago Silva","Marta","Pulisic","Bellingham","Di Stéfano","Eusebio","Cruyff","Müller","Pep Guardiola","Jurgen Klopp"]
+  },
+  filmes: {
+    label: "Filmes",
+    desc: "Clássicos e blockbusters",
+    words: ["Titanic","Matrix","Interestelar","Pulp Fiction","Avatar","Coringa","Vingadores","Senhor dos Anéis","Star Wars","Forrest Gump","Origem","Gladiador","Cidade de Deus","Parasita","Clube da Luta","Poderoso Chefão","Toy Story","Up","Wall-E","Shrek","Tubarão","Rocky","Indiana Jones","De Volta para o Futuro","O Iluminado","Psicose","Tropa de Elite","Cassino","Goodfellas","Os Incríveis","Procurando Nemo","O Rei Leão","Pantera Negra","Homem-Aranha","Batman","Duna","Oppenheimer","Barbie","La La Land","Whiplash"]
+  },
+  musicas: {
+    label: "Músicas",
+    desc: "Hits inesquecíveis",
+    words: ["Imagine","Bohemian Rhapsody","Garota de Ipanema","Hotel California","Stairway to Heaven","Smells Like Teen Spirit","Wonderwall","Despacito","Believer","Shape of You","Thriller","Billie Jean","Radioactive","Numb","In the End","Yesterday","Hey Jude","Like a Rolling Stone","Bad Guy","Rolling in the Deep","Someone Like You","Viva La Vida","Take On Me","Sweet Child O' Mine","Livin' on a Prayer","Eu Sei Que Vou Te Amar","Aquarela","Travessia","Garota Nacional","Evidências","Ai Se Eu Te Pego","Tocando em Frente","Sozinho","Tim Maia","Sandra Rosa Madalena"]
+  },
+  comida: {
+    label: "Comida",
+    desc: "Pratos do mundo",
+    words: ["Pizza","Sushi","Hambúrguer","Feijoada","Lasanha","Brigadeiro","Coxinha","Pão de Queijo","Açaí","Pastel","Tacos","Pad Thai","Risoto","Churrasco","Sorvete","Tapioca","Croissant","Ceviche","Ramen","Curry","Picanha","Moqueca","Acarajé","Vatapá","Estrogonofe","Quibe","Esfiha","Pamonha","Cachorro-Quente","Macarrão","Salada Caesar","Crepe","Hot Roll","Yakisoba","Tempura","Paella","Gazpacho","Falafel","Hummus","Shawarma"]
+  },
+  animais: {
+    label: "Animais",
+    desc: "Selva, mar e céu",
+    words: ["Leão","Tigre","Elefante","Girafa","Águia","Tubarão","Polvo","Pinguim","Lobo","Urso","Coruja","Camaleão","Canguru","Coala","Crocodilo","Borboleta","Cavalo","Macaco","Golfinho","Panda","Hipopótamo","Rinoceronte","Zebra","Flamingo","Tartaruga","Cobra","Iguana","Falcão","Beija-Flor","Tamanduá","Ornitorrinco","Onça","Capivara","Papagaio","Tucano","Esquilo","Raposa","Castor","Lhama","Alce"]
+  },
+  paises: {
+    label: "Países",
+    desc: "Atlas geográfico",
+    words: ["Brasil","Japão","França","Itália","Egito","Austrália","Canadá","México","Argentina","Alemanha","Inglaterra","Índia","China","Rússia","Marrocos","Tailândia","Grécia","Noruega","Portugal","Espanha","Estados Unidos","Holanda","Suécia","Suíça","Áustria","Polônia","Turquia","Indonésia","Vietnã","Coreia do Sul","Chile","Peru","Colômbia","Cuba","Jamaica","Quênia","África do Sul","Nova Zelândia","Islândia","Irlanda"]
+  }
+};
+
+/* ─────────────────────────────────────────────
+   STATE
+   ───────────────────────────────────────────── */
+const state = {
+  players: [],            // [{id, name}]
+  themeKey: null,
+  impostorCount: 1,
+  hintForImpostor: false,
+  // round
+  roundNo: 1,
+  word: null,
+  impostorIds: [],
+  shuffledOrder: [],      // for reveal phase (shuffle so adjacent guesses aren't predictable)
+  revealIdx: 0,
+  // game phase
+  turnIdx: 0,
+};
+
+/* ─────────────────────────────────────────────
+   DOM REFS
+   ───────────────────────────────────────────── */
+const $ = sel => document.querySelector(sel);
+const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+const setupScreen = $("#setupScreen");
+const revealScreen = $("#revealScreen");
+const gameScreen = $("#gameScreen");
+const resultScreen = $("#resultScreen");
+
+const playerForm = $("#playerForm");
+const playerInput = $("#playerName");
+const addBtn = $("#addBtn");
+const playersList = $("#playersList");
+const emptyNote = $("#emptyNote");
+const playerCountEl = $("#playerCount");
+
+const themesGrid = $("#themesGrid");
+const themeLabelEl = $("#themeLabel");
+
+const impostorStepper = $("#impostorStepper");
+const impostorVal = $("#impostorVal");
+const hintOff = $("#hintOff");
+const hintOn = $("#hintOn");
+
+const startBtn = $("#startBtn");
+const footHint = $("#footHint");
+
+// reveal
+const revealCard = $("#revealCard");
+const revealName = $("#revealName");
+const revealCardNum = $("#revealCardNum");
+const revealCounter = $("#revealCounter");
+const progressTrack = $("#progressTrack");
+const tapToReveal = $("#tapToReveal");
+const revealBack = $("#revealBack");
+
+// game
+const roundLabel = $("#roundLabel");
+const gameThemeEl = $("#gameTheme");
+const turnName = $("#turnName");
+const orderList = $("#orderList");
+const nextTurnBtn = $("#nextTurn");
+const endRoundBtn = $("#endRound");
+const gameBack = $("#gameBack");
+
+// result
+const resultRound = $("#resultRound");
+const resultTheme = $("#resultTheme");
+const resultWord = $("#resultWord");
+const resultImpostors = $("#resultImpostors");
+const resultImpostorLabel = $("#resultImpostorLabel");
+const playAgainBtn = $("#playAgainBtn");
+const newGameBtn = $("#newGameBtn");
+
+/* ─────────────────────────────────────────────
+   INIT
+   ───────────────────────────────────────────── */
+function init(){
+  renderThemes();
+  renderHintToggle();
+  bind();
+  syncCTA();
+}
+
+/* ─────────────────────────────────────────────
+   THEMES UI
+   ───────────────────────────────────────────── */
+function renderThemes(){
+  themesGrid.innerHTML = "";
+  const keys = Object.keys(THEMES);
+  keys.forEach((key, i) => {
+    const t = THEMES[key];
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "theme";
+    btn.dataset.key = key;
+    btn.innerHTML = `
+      <span class="tno">N°${String(i+1).padStart(2,"0")}</span>
+      <span class="tname">${t.label}</span>
+      <span class="tcount">${t.words.length} palavras · ${t.desc}</span>
+    `;
+    btn.addEventListener("click", () => selectTheme(key));
+    themesGrid.appendChild(btn);
+  });
+}
+function selectTheme(key){
+  state.themeKey = key;
+  $$(".theme").forEach(el => el.classList.toggle("active", el.dataset.key === key));
+  themeLabelEl.textContent = THEMES[key].label;
+  syncCTA();
+}
+
+/* ─────────────────────────────────────────────
+   PLAYERS UI
+   ───────────────────────────────────────────── */
+function addPlayer(name){
+  name = name.trim();
+  if(!name) return;
+  if(state.players.length >= 16) return;
+  if(state.players.some(p => p.name.toLowerCase() === name.toLowerCase())) return;
+  state.players.push({ id: crypto.randomUUID?.() ?? String(Date.now()+Math.random()), name });
+  renderPlayers();
+  syncCTA();
+}
+function removePlayer(id){
+  state.players = state.players.filter(p => p.id !== id);
+  renderPlayers();
+  syncCTA();
+}
+function renderPlayers(){
+  if(state.players.length === 0){
+    playersList.classList.add("hide");
+    emptyNote.classList.remove("hide");
+  } else {
+    playersList.classList.remove("hide");
+    emptyNote.classList.add("hide");
+  }
+  playersList.innerHTML = state.players.map((p,i) => `
+    <div class="player">
+      <span class="pno">N°${String(i+1).padStart(2,"0")}</span>
+      <span class="pname">${escapeHTML(p.name)}</span>
+      <button class="px" type="button" data-id="${p.id}" aria-label="Remover ${escapeHTML(p.name)}">remover ×</button>
+    </div>
+  `).join("");
+  $$(".player .px").forEach(btn => {
+    btn.addEventListener("click", () => removePlayer(btn.dataset.id));
+  });
+  playerCountEl.textContent = state.players.length;
+}
+
+/* ─────────────────────────────────────────────
+   IMPOSTORS STEPPER + HINT TOGGLE
+   ───────────────────────────────────────────── */
+function syncImpostor(){
+  const max = Math.max(1, Math.floor((state.players.length - 1) / 2));
+  if(state.impostorCount > max) state.impostorCount = max;
+  if(state.impostorCount < 1) state.impostorCount = 1;
+  impostorVal.textContent = state.impostorCount;
+  impostorStepper.querySelector('[data-d="-1"]').disabled = state.impostorCount <= 1;
+  impostorStepper.querySelector('[data-d="1"]').disabled = state.impostorCount >= max;
+}
+function renderHintToggle(){
+  [hintOff, hintOn].forEach(b => {
+    const on = b.dataset.v === "on";
+    const active = on === state.hintForImpostor;
+    b.style.background = active ? "var(--ink)" : "transparent";
+    b.style.color = active ? "var(--paper)" : "var(--ink)";
+    b.style.fontFamily = "var(--mono)";
+    b.style.fontSize = "12px";
+    b.style.letterSpacing = ".18em";
+    b.style.textTransform = "uppercase";
+    b.style.padding = "0 18px";
+  });
+}
+
+/* ─────────────────────────────────────────────
+   CTA SYNC
+   ───────────────────────────────────────────── */
+function syncCTA(){
+  const ok = state.players.length >= 3 && !!state.themeKey;
+  startBtn.disabled = !ok;
+  syncImpostor();
+  const themeName = state.themeKey ? THEMES[state.themeKey].label : "Sem tema";
+  footHint.textContent = `${state.players.length} jogador${state.players.length===1?"":"es"} · ${themeName} · ${state.impostorCount} impostor${state.impostorCount===1?"":"es"}`;
+}
+
+/* ─────────────────────────────────────────────
+   ROUND START — shuffles + assigns
+   ───────────────────────────────────────────── */
+function startRound(){
+  if(state.players.length < 3 || !state.themeKey) return;
+  const theme = THEMES[state.themeKey];
+  state.word = pickRandom(theme.words);
+  state.impostorIds = pickN(state.players.map(p=>p.id), state.impostorCount);
+  state.shuffledOrder = shuffle([...state.players]);
+  state.revealIdx = 0;
+  state.turnIdx = 0;
+
+  showScreen("reveal");
+  renderRevealStep();
+}
+
+/* ─────────────────────────────────────────────
+   REVEAL UI
+   ───────────────────────────────────────────── */
+function renderRevealStep(){
+  const total = state.shuffledOrder.length;
+  const i = state.revealIdx;
+  const player = state.shuffledOrder[i];
+
+  // progress
+  progressTrack.innerHTML = "";
+  for(let k=0;k<total;k++){
+    const seg = document.createElement("span");
+    seg.className = "seg" + (k < i ? " done" : k === i ? " curr" : "");
+    progressTrack.appendChild(seg);
+  }
+  const counter = `${String(i+1).padStart(2,"0")}/${String(total).padStart(2,"0")}`;
+  revealCounter.textContent = counter;
+  revealCardNum.textContent = counter;
+
+  setRevealFront(player.name);
+}
+
+function setRevealFront(name){
+  revealCard.className = "reveal-card front";
+  revealCard.innerHTML = `
+    <span class="who">Passando para</span>
+    <span class="num">${revealCounter.textContent}</span>
+    <span class="name">${escapeHTML(name)}<span class="pt">.</span></span>
+    <button type="button" class="tap" id="tapToReveal">Tocar para revelar</button>
+    <span class="corner bl">Discrição</span>
+    <span class="corner br">Não mostre a ninguém</span>
+  `;
+  revealCard.onclick = doReveal;
+}
+
+function doReveal(){
+  const player = state.shuffledOrder[state.revealIdx];
+  const isImpostor = state.impostorIds.includes(player.id);
+  const themeName = THEMES[state.themeKey].label;
+
+  if(isImpostor){
+    revealCard.className = "reveal-card back-impostor";
+    const hintLine = state.hintForImpostor
+      ? `Tema: <b style="color:var(--paper)">${themeName}</b>. Tente se misturar.`
+      : `Disfarce. Você não sabe a palavra. Tente descobrir.`;
+    revealCard.innerHTML = `
+      <span class="label">Você é</span>
+      <span class="theme-tag">${state.hintForImpostor ? themeName : "—"}</span>
+      <span class="word">Impostor<span class="pt">.</span></span>
+      <span class="hint">${hintLine}</span>
+      <button type="button" class="hide" id="hideCardBtn">Esconder e passar →</button>
+    `;
+  } else {
+    revealCard.className = "reveal-card back-word";
+    revealCard.innerHTML = `
+      <span class="label">Palavra secreta</span>
+      <span class="theme-tag">${themeName}</span>
+      <span class="word">${escapeHTML(state.word)}<span class="pt">.</span></span>
+      <span class="hint">Dê uma dica relacionada — sem entregar a palavra.</span>
+      <button type="button" class="hide" id="hideCardBtn">Esconder e passar →</button>
+    `;
+  }
+  revealCard.onclick = null;
+  $("#hideCardBtn").addEventListener("click", advanceReveal);
+}
+
+function advanceReveal(){
+  state.revealIdx++;
+  if(state.revealIdx >= state.shuffledOrder.length){
+    enterGame();
+  } else {
+    renderRevealStep();
+  }
+}
+
+/* ─────────────────────────────────────────────
+   GAME PHASE
+   ───────────────────────────────────────────── */
+function enterGame(){
+  state.turnIdx = 0;
+  showScreen("game");
+  roundLabel.textContent = `Rodada ${String(state.roundNo).padStart(2,"0")}`;
+  gameThemeEl.textContent = `Tema · ${THEMES[state.themeKey].label}`;
+  renderTurn();
+}
+function renderTurn(){
+  const order = state.shuffledOrder;
+  const cur = order[state.turnIdx];
+  turnName.innerHTML = `${escapeHTML(cur.name)}<span class="pt">.</span>`;
+  orderList.innerHTML = order.map((p,i)=>`
+    <div class="order-item ${i===state.turnIdx?'active':''}">
+      <span class="ono">N°${String(i+1).padStart(2,"0")}</span>
+      <span class="oname">${escapeHTML(p.name)}</span>
+      <span class="ostate">${i<state.turnIdx?'já falou':i===state.turnIdx?'falando agora':'aguardando'}</span>
+    </div>
+  `).join("");
+}
+function nextTurn(){
+  state.turnIdx = (state.turnIdx + 1) % state.shuffledOrder.length;
+  renderTurn();
+}
+function endRound(){
+  showScreen("result");
+  resultRound.textContent = String(state.roundNo).padStart(2,"0");
+  resultTheme.textContent = `Tema · ${THEMES[state.themeKey].label}`;
+  resultWord.innerHTML = `${escapeHTML(state.word)}<span class="pt">.</span>`;
+  const impostors = state.players.filter(p => state.impostorIds.includes(p.id));
+  resultImpostorLabel.textContent = impostors.length > 1 ? `Os impostores eram` : `O impostor era`;
+  resultImpostors.innerHTML = impostors.map(p => `${escapeHTML(p.name)}`).join('<span style="color:var(--ink-dim)"> & </span>') + '<span class="pt">.</span>';
+}
+
+/* ─────────────────────────────────────────────
+   SCREEN MGMT
+   ───────────────────────────────────────────── */
+function showScreen(name){
+  setupScreen.classList.toggle("hide", name !== "setup");
+  revealScreen.classList.toggle("hide", name !== "reveal");
+  gameScreen.classList.toggle("hide", name !== "game");
+  resultScreen.classList.toggle("hide", name !== "result");
+  window.scrollTo({top:0, behavior:"instant"});
+}
+
+/* ─────────────────────────────────────────────
+   BINDINGS
+   ───────────────────────────────────────────── */
+function bind(){
+  playerInput.addEventListener("input", () => {
+    addBtn.disabled = playerInput.value.trim().length === 0 || state.players.length >= 16;
+  });
+  playerForm.addEventListener("submit", e => {
+    e.preventDefault();
+    addPlayer(playerInput.value);
+    playerInput.value = "";
+    addBtn.disabled = true;
+    playerInput.focus();
+  });
+
+  impostorStepper.addEventListener("click", e => {
+    const b = e.target.closest("button[data-d]");
+    if(!b) return;
+    state.impostorCount += parseInt(b.dataset.d, 10);
+    syncCTA();
+  });
+  hintOff.addEventListener("click", () => { state.hintForImpostor = false; renderHintToggle(); });
+  hintOn.addEventListener("click",  () => { state.hintForImpostor = true;  renderHintToggle(); });
+
+  startBtn.addEventListener("click", startRound);
+
+  revealBack.addEventListener("click", () => showScreen("setup"));
+  gameBack.addEventListener("click", () => {
+    if(confirm("Encerrar a rodada e voltar ao elenco?")) showScreen("setup");
+  });
+  nextTurnBtn.addEventListener("click", nextTurn);
+  endRoundBtn.addEventListener("click", endRound);
+
+  playAgainBtn.addEventListener("click", () => {
+    state.roundNo += 1;
+    startRound();
+  });
+  newGameBtn.addEventListener("click", () => {
+    state.roundNo = 1;
+    showScreen("setup");
+  });
+}
+
+/* ─────────────────────────────────────────────
+   HELPERS
+   ───────────────────────────────────────────── */
+function pickRandom(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function pickN(ids, n){
+  return shuffle(ids).slice(0, n);
+}
+function escapeHTML(s){
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+init();
+</script>
+
+</body>
+</html>
