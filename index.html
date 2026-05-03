@@ -389,11 +389,34 @@
   .reveal-stage{
     display:grid;place-items:center;
     padding:clamp(20px,4vw,40px) clamp(8px,2vw,16px);
+    perspective:1600px;
+  }
+  .flip-wrap{
+    width:100%;max-width:560px;
+    aspect-ratio:3/4;
+    max-height:min(78vh, 78dvh);
+    position:relative;
+    transform-style:preserve-3d;
+    transition:transform .9s cubic-bezier(.2,.65,.25,1);
+    will-change:transform;
+  }
+  .flip-wrap.flipped{transform:rotateY(180deg)}
+  @media(max-height:640px){
+    .flip-wrap{aspect-ratio:auto;max-height:none;min-height:60dvh}
+  }
+  .flip-face{
+    position:absolute;inset:0;
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+    transform-style:preserve-3d;
+  }
+  .flip-face.back{transform:rotateY(180deg)}
+  .flip-face .reveal-card{
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
   }
   .reveal-card{
-    width:100%;max-width:560px;
-    aspect-ratio: 3/4;
-    max-height:min(78vh, 78dvh);
+    width:100%;height:100%;
     border:1px solid var(--rule);
     background:var(--paper);
     display:grid;place-items:center;
@@ -403,9 +426,6 @@
     transition:background .35s, color .35s, border-color .35s;
     cursor:pointer;
     overflow:hidden;
-  }
-  @media(max-height:640px){
-    .reveal-card{aspect-ratio:auto;max-height:none;min-height:60dvh}
   }
   .reveal-card.front:hover{background:var(--paper-2)}
   .reveal-card.front .who{
@@ -840,13 +860,9 @@
   </div>
 
   <div class="reveal-stage">
-    <div id="revealCard" class="reveal-card front">
-      <span class="who">Passando para</span>
-      <span class="num" id="revealCardNum">01/03</span>
-      <span class="name" id="revealName">—<span class="pt">.</span></span>
-      <button type="button" class="tap" id="tapToReveal">Tocar para revelar</button>
-      <span class="corner bl">Discrição</span>
-      <span class="corner br">Não mostre a ninguém</span>
+    <div class="flip-wrap" id="flipWrap">
+      <div class="flip-face front" id="flipFront"></div>
+      <div class="flip-face back" id="flipBack"></div>
     </div>
   </div>
 
@@ -1104,12 +1120,11 @@ const startBtn = $("#startBtn");
 const footHint = $("#footHint");
 
 // reveal
-const revealCard = $("#revealCard");
-const revealName = $("#revealName");
-const revealCardNum = $("#revealCardNum");
+const flipWrap = $("#flipWrap");
+const flipFront = $("#flipFront");
+const flipBack = $("#flipBack");
 const revealCounter = $("#revealCounter");
 const progressTrack = $("#progressTrack");
-const tapToReveal = $("#tapToReveal");
 const revealBack = $("#revealBack");
 
 // game
@@ -1328,23 +1343,23 @@ function renderRevealStep(){
   }
   const counter = `${String(i+1).padStart(2,"0")}/${String(total).padStart(2,"0")}`;
   revealCounter.textContent = counter;
-  revealCardNum.textContent = counter;
 
-  setRevealFront(player.name);
+  setRevealFront(player.name, counter);
+  // ensure card is on the front face (no flip)
+  flipWrap.classList.remove("flipped");
 }
 
-function setRevealFront(name){
-  const counter = revealCounter.textContent;
-  revealCard.className = "reveal-card front";
-  revealCard.innerHTML = `
-    <span class="who">Passando para</span>
-    <span class="num">${counter}</span>
-    <span class="name">${escapeHTML(name)}<span class="pt">.</span></span>
-    <button type="button" class="tap" id="tapToReveal">Tocar para revelar</button>
-    <span class="corner bl">Discrição</span>
-    <span class="corner br">Não mostre a ninguém</span>
+function setRevealFront(name, counter){
+  flipFront.innerHTML = `
+    <div class="reveal-card front">
+      <span class="who">Passando para</span>
+      <span class="num">${counter}</span>
+      <span class="name">${escapeHTML(name)}<span class="pt">.</span></span>
+      <button type="button" class="tap" id="tapToReveal">Tocar para revelar</button>
+      <span class="corner bl">Discrição</span>
+      <span class="corner br">Não mostre a ninguém</span>
+    </div>
   `;
-  revealCard.onclick = null;
   document.getElementById("tapToReveal").addEventListener("click", e => {
     e.stopPropagation();
     doReveal();
@@ -1358,6 +1373,7 @@ function doReveal(){
   const isQuestionMode = state.mode === "perguntas";
   const themeName = isQuestionMode ? "Perguntas" : THEMES[state.themeKey].label;
 
+  let cardClass, cardHTML;
   if(isImpostor){
     const eyebrow = "Você é";
     const title = `Impostor<span class="pt">.</span>`;
@@ -1369,8 +1385,8 @@ function doReveal(){
     } else {
       sub = `Disfarce. Você não sabe a palavra. Tente descobrir.`;
     }
-    revealCard.className = "reveal-card playing back-impostor";
-    revealCard.innerHTML = `
+    cardClass = "reveal-card playing back-impostor";
+    cardHTML = `
       <span class="ornament"></span>
       <span class="center-mark"></span>
       <div class="card-meta-top">
@@ -1387,23 +1403,23 @@ function doReveal(){
       <button type="button" class="dismiss" id="hideCardBtn">Esconder e passar →</button>
     `;
   } else {
-    let eyebrow, title, sub, suit, idx;
+    let eyebrow, title, sub, suit, idx, titleClass;
     if(isQuestionMode){
       const qObj = state.question;
       eyebrow = "Sua pergunta";
       title = `${escapeHTML(qObj.q)}`;
       sub = "";
       suit = "?"; idx = "PG";
-      var titleClass = "card-title long";
+      titleClass = "card-title long";
     } else {
       eyebrow = "Palavra secreta";
       title = `${escapeHTML(state.word)}<span class="pt">.</span>`;
       sub = `Dê uma dica relacionada — sem entregar a palavra.`;
       suit = "◆"; idx = "PS";
-      var titleClass = "card-title";
+      titleClass = "card-title";
     }
-    revealCard.className = "reveal-card playing back-word";
-    revealCard.innerHTML = `
+    cardClass = "reveal-card playing back-word";
+    cardHTML = `
       <span class="ornament"></span>
       <div class="card-meta-top">
         <span class="who">${escapeHTML(player.name)} · ${counter}</span>
@@ -1419,11 +1435,13 @@ function doReveal(){
       <button type="button" class="dismiss" id="hideCardBtn">Esconder e passar →</button>
     `;
   }
-  revealCard.onclick = null;
+  flipBack.innerHTML = `<div class="${cardClass}">${cardHTML}</div>`;
   document.getElementById("hideCardBtn").addEventListener("click", e => {
     e.stopPropagation();
     advanceReveal();
   });
+  // trigger the flip
+  flipWrap.classList.add("flipped");
 }
 
 function advanceReveal(){
