@@ -15,7 +15,9 @@
     --paper: #0b0b0a;
     --paper-2: #111110;
     --rule: #2a2823;
-    --warn: #ff3b1f;
+    --accent: #e63946;
+    --accent-deep: #b32a35;
+    --warn: #e63946;
     --serif: "Fraunces", "Times New Roman", serif;
     --mono: "JetBrains Mono", ui-monospace, monospace;
     --max: 1140px;
@@ -465,42 +467,48 @@
   }
   .reveal-card.back-word .dismiss:hover{background:var(--ink);color:var(--paper)}
 
-  /* — back: impostor (inverted) — */
+  /* — back: impostor (red) — */
   .reveal-card.back-impostor{
-    background:var(--ink);color:var(--paper);
-    border:1px solid var(--ink);
+    background:var(--accent);color:var(--ink);
+    border:1px solid var(--accent);
     cursor:default;
   }
+  .reveal-card.back-impostor::after{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(120% 80% at 50% 0%, transparent 60%, rgba(0,0,0,.25) 100%);
+  }
   .reveal-card.back-impostor .label{
-    font-family:var(--mono);font-size:clamp(10px,1.2vw,11px);letter-spacing:.2em;text-transform:uppercase;color:#5a554a;
+    font-family:var(--mono);font-size:clamp(10px,1.2vw,11px);letter-spacing:.2em;text-transform:uppercase;color:rgba(255,235,225,.7);
     position:absolute;top:clamp(14px,3vw,24px);left:clamp(14px,3vw,24px);
-    max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;z-index:1;
   }
   .reveal-card.back-impostor .theme-tag{
-    font-family:var(--mono);font-size:clamp(10px,1.2vw,11px);letter-spacing:.2em;text-transform:uppercase;color:#5a554a;
-    position:absolute;top:clamp(14px,3vw,24px);right:clamp(14px,3vw,24px);
+    font-family:var(--mono);font-size:clamp(10px,1.2vw,11px);letter-spacing:.2em;text-transform:uppercase;color:rgba(255,235,225,.7);
+    position:absolute;top:clamp(14px,3vw,24px);right:clamp(14px,3vw,24px);z-index:1;
   }
   .reveal-card.back-impostor .word{
     font-family:var(--serif);font-style:italic;font-weight:200;
     font-size:clamp(44px, 12vw, 122px);
     line-height:.9;letter-spacing:-.04em;
-    padding:0 8px;word-break:break-word;
+    padding:0 8px;word-break:break-word;z-index:1;
+    text-shadow:0 1px 0 rgba(0,0,0,.15);
   }
-  .reveal-card.back-impostor .word .pt{color:#5a554a}
+  .reveal-card.back-impostor .word .pt{color:rgba(255,235,225,.6)}
   .reveal-card.back-impostor .hint{
-    font-family:var(--serif);font-style:italic;font-weight:300;font-size:clamp(15px,1.8vw,18px);color:#5a554a;
+    font-family:var(--serif);font-style:italic;font-weight:300;font-size:clamp(15px,1.8vw,18px);color:rgba(255,235,225,.85);
     position:absolute;bottom:clamp(70px,12vw,90px);left:clamp(14px,3vw,24px);right:clamp(14px,3vw,24px);
-    line-height:1.4;
+    line-height:1.4;z-index:1;
   }
+  .reveal-card.back-impostor .hint b{color:var(--ink);font-weight:500}
   .reveal-card.back-impostor .dismiss{
     position:absolute;bottom:clamp(14px,3vw,24px);left:clamp(14px,3vw,24px);right:clamp(14px,3vw,24px);
-    border:1px solid #5a554a;
+    border:1px solid rgba(255,235,225,.5);
     padding:14px 18px;min-height:48px;
     font-family:var(--mono);font-size:clamp(10px,1.2vw,11px);letter-spacing:.22em;text-transform:uppercase;
-    color:var(--paper);background:transparent;cursor:pointer;
+    color:var(--ink);background:transparent;cursor:pointer;z-index:1;
     transition:background .15s, color .15s, border-color .15s;
   }
-  .reveal-card.back-impostor .dismiss:hover{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+  .reveal-card.back-impostor .dismiss:hover{background:var(--ink);color:var(--accent-deep);border-color:var(--ink)}
 
   .reveal-bottom{
     text-align:center;
@@ -598,6 +606,15 @@
     font-size:clamp(34px,8vw,76px);line-height:.95;letter-spacing:-.03em;word-break:break-word;
   }
   .result-row .val .pt{color:var(--ink-dim)}
+  .result-row .val.accusation{
+    color:var(--accent);
+    text-decoration:line-through;
+    text-decoration-color:var(--accent-deep);
+    text-decoration-thickness:3px;
+    text-underline-offset:0;
+  }
+  .result-row .val.accusation .pt,
+  .result-row .val.accusation .sep{color:var(--accent-deep);text-decoration:none;display:inline-block;text-decoration-line:none}
   .result-row .small{font-family:var(--mono);font-size:clamp(10px,1.2vw,11px);letter-spacing:.16em;color:var(--ink-dim);text-transform:uppercase;margin-top:6px}
 
   /* — animations — */
@@ -803,7 +820,7 @@
         </div>
         <div class="result-row">
           <span class="lbl" id="resultImpostorLabel">O impostor era</span>
-          <span class="val" id="resultImpostors">—<span class="pt">.</span></span>
+          <span class="val accusation" id="resultImpostors">—<span class="pt">.</span></span>
           <span class="small">Aplaudam, ridicularizem, joguem novamente.</span>
         </div>
       </div>
@@ -877,16 +894,6 @@ const THEMES = {
     label: "Naruto",
     desc: "Vila da Folha & além",
     words: ["Naruto Uzumaki","Sasuke Uchiha","Sakura Haruno","Kakashi Hatake","Itachi Uchiha","Madara Uchiha","Pain","Hinata Hyuga","Shikamaru Nara","Rock Lee","Gaara","Jiraiya","Tsunade","Orochimaru","Minato Namikaze","Obito Uchiha","Konan","Deidara","Sasori","Kisame","Hidan","Kakuzu","Konohamaru","Neji Hyuga","Tenten","Choji Akimichi","Ino Yamanaka","Kiba Inuzuka","Shino Aburame","Kurama","Hashirama","Tobirama","Kabuto","Zabuza","Haku","Rasengan","Chidori","Sharingan","Byakugan","Rinnegan","Hokage","Akatsuki","Konoha","Suna","Edo Tensei","Susanoo","Amaterasu","Tsukuyomi","Bijuu","Ninjutsu","Genjutsu"]
-  },
-  politicabr: {
-    label: "Política BR",
-    desc: "Figuras e marcos",
-    words: ["Lula","FHC","Dilma Rousseff","Michel Temer","Jair Bolsonaro","Tancredo Neves","José Sarney","Fernando Collor","Itamar Franco","João Goulart","Getúlio Vargas","Juscelino Kubitschek","Tiradentes","Princesa Isabel","Dom Pedro II","Olavo Bilac","Rui Barbosa","PT","PSDB","PL","MDB","PSOL","PSB","PCdoB","Novo","União Brasil","Centrão","Impeachment","STF","TSE","Câmara dos Deputados","Senado","Plenário","Constituição de 1988","Congresso","Planalto","Eleições","Reforma da Previdência","Diretas Já","Mensalão","Lava Jato","CPI","Voto","Urna Eletrônica","Esquerda","Direita","Federalismo","Ditadura Militar","Redemocratização","Plano Real"]
-  },
-  bolsonaro: {
-    label: "Bolsonaro",
-    desc: "Universo bolsonarista",
-    words: ["Jair Bolsonaro","Mito","Capitão","17","Imbrochável","Cloroquina","Caneta Bic","Tchutchucão","Facada de Adelio","Michelle Bolsonaro","Eduardo Bolsonaro","Flávio Bolsonaro","Carlos Bolsonaro","Hamilton Mourão","Paulo Guedes","Sérgio Moro","Damares Alves","Augusto Heleno","Onyx Lorenzoni","Tereza Cristina","Ricardo Salles","Eduardo Pazuello","Ernesto Araújo","Abraham Weintraub","Olavo de Carvalho","Pastor Silas Malafaia","PL","Aliança pelo Brasil","Posse 2019","Motociata","Live de Quarta","8 de Janeiro","Brasil Acima de Tudo","Deus Acima de Todos","Família Tradicional","Verde e Amarelo","Patriotas","Mamadeira de Piroca","Kit Gay","Pacote Anticrime","Auxílio Brasil","Reforma da Previdência","Armamento Civil","Tropa de Elite","Saudade","CPMI","Vacina","SUS","Fake News","Bolsominion"]
   }
 };
 
@@ -1141,7 +1148,7 @@ function doReveal(){
   if(isImpostor){
     revealCard.className = "reveal-card back-impostor";
     const hintLine = state.hintForImpostor
-      ? `Tema: <b style="color:var(--paper)">${themeName}</b>. Tente se misturar.`
+      ? `Tema: <b>${themeName}</b>. Tente se misturar.`
       : `Disfarce. Você não sabe a palavra. Tente descobrir.`;
     revealCard.innerHTML = `
       <span class="label">${escapeHTML(player.name)} · ${counter}</span>
@@ -1209,7 +1216,7 @@ function endRound(){
   resultWord.innerHTML = `${escapeHTML(state.word)}<span class="pt">.</span>`;
   const impostors = state.players.filter(p => state.impostorIds.includes(p.id));
   resultImpostorLabel.textContent = impostors.length > 1 ? `Os impostores eram` : `O impostor era`;
-  resultImpostors.innerHTML = impostors.map(p => `${escapeHTML(p.name)}`).join('<span style="color:var(--ink-dim)"> & </span>') + '<span class="pt">.</span>';
+  resultImpostors.innerHTML = impostors.map(p => escapeHTML(p.name)).join('<span class="sep"> & </span>') + '<span class="pt">.</span>';
 }
 
 /* ─────────────────────────────────────────────
