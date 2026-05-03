@@ -987,7 +987,12 @@
           <span class="lbl" id="resultWordLabel">A palavra secreta era</span>
           <span class="val" id="resultWord">—<span class="pt">.</span></span>
         </div>
-        <div class="result-row scroll-reveal" data-delay="1">
+        <div class="result-row scroll-reveal hide" id="resultHintRow" data-delay="1">
+          <span class="lbl">Pista que o impostor recebeu</span>
+          <span class="val long" id="resultHint">—</span>
+          <span class="small">Era só com isso que ele tinha pra improvisar.</span>
+        </div>
+        <div class="result-row scroll-reveal" data-delay="2">
           <span class="lbl" id="resultImpostorLabel">O impostor era</span>
           <span class="val accusation" id="resultImpostors">—<span class="pt">.</span></span>
           <span class="small">Aplaudam, ridicularizem, joguem novamente.</span>
@@ -1621,6 +1626,10 @@ function nextTurn(){
 function endRound(){
   showScreen("result");
   resultRound.textContent = String(state.roundNo).padStart(2,"0");
+  const hintRow = document.getElementById("resultHintRow");
+  const hintEl = document.getElementById("resultHint");
+  hintRow.classList.add("hide");
+
   if(state.mode === "perguntas"){
     resultTheme.textContent = `Modo · Perguntas`;
     document.getElementById("resultWordLabel").textContent = "A pergunta era";
@@ -1631,6 +1640,10 @@ function endRound(){
     document.getElementById("resultWordLabel").textContent = "A história começava com";
     resultWord.innerHTML = `${escapeHTML(state.story.p)}`;
     resultWord.classList.add("long");
+    // show hint row with what the impostor saw
+    const keywords = state.story.k.map(k => `<b style="color:var(--accent);font-weight:500">${escapeHTML(k)}</b>`).join(" · ");
+    hintEl.innerHTML = `<em>${escapeHTML(state.story.g)}</em> · ${keywords}`;
+    hintRow.classList.remove("hide");
   } else {
     resultTheme.textContent = `Tema · ${THEMES[state.themeKey].label}`;
     document.getElementById("resultWordLabel").textContent = "A palavra secreta era";
