@@ -517,6 +517,38 @@
   }
   .reveal-card.front:hover .tap{background:var(--ink);color:var(--paper);border-color:var(--ink)}
   .reveal-card.front .corner{display:none}
+  .reveal-card.front .warning-strip{
+    position:absolute;
+    bottom:calc(clamp(20px,3vw,28px) + 64px);
+    left:clamp(20px,3vw,28px);
+    right:clamp(20px,3vw,28px);
+    padding:12px 14px;
+    font-family:var(--mono);
+    font-size:clamp(11px,1.4vw,13px);
+    font-weight:600;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--accent);
+    text-align:center;
+    border-top:1px solid rgba(230,57,70,.55);
+    border-bottom:1px solid rgba(230,57,70,.55);
+    background:linear-gradient(180deg, transparent 0%, rgba(230,57,70,.08) 50%, transparent 100%);
+    text-shadow:0 0 14px rgba(230,57,70,.35);
+    z-index:2;
+    animation:warn-pulse 2.4s ease-in-out infinite;
+  }
+  .reveal-card.front .warning-strip .icon{
+    color:var(--accent);
+    margin:0 8px;
+    font-style:normal;
+  }
+  @keyframes warn-pulse{
+    0%,100%{opacity:.8}
+    50%{opacity:1}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .reveal-card.front .warning-strip{animation:none}
+  }
 
   /* —————— PLAYING CARD: shared structure —————— */
   .reveal-card.playing{
@@ -1865,9 +1897,8 @@ function setRevealFront(name, counter){
       <span class="who">Passando para</span>
       <span class="num">${counter}</span>
       <span class="name">${escapeHTML(name)}<span class="pt">.</span></span>
+      <div class="warning-strip"><span class="icon">⚠</span>Não mostre a ninguém<span class="icon">⚠</span></div>
       <button type="button" class="tap" id="tapToReveal">Tocar para revelar</button>
-      <span class="corner bl">Discrição</span>
-      <span class="corner br">Não mostre a ninguém</span>
     </div>
   `;
   document.getElementById("tapToReveal").addEventListener("click", e => {
