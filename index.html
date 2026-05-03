@@ -1392,7 +1392,7 @@ function doReveal(){
       const qObj = state.question;
       eyebrow = "Sua pergunta";
       title = `${escapeHTML(qObj.q)}`;
-      sub = `Responda baseado em: <b>${escapeHTML(qObj.c)}</b>. Sem entregar de cara.`;
+      sub = "";
       suit = "?"; idx = "PG";
       var titleClass = "card-title long";
     } else {
@@ -1414,7 +1414,7 @@ function doReveal(){
       <div class="card-center">
         <span class="card-eyebrow">${eyebrow}</span>
         <span class="${titleClass}">${title}</span>
-        <span class="card-sub">${sub}</span>
+        ${sub ? `<span class="card-sub">${sub}</span>` : ""}
       </div>
       <button type="button" class="dismiss" id="hideCardBtn">Esconder e passar →</button>
     `;
@@ -1471,7 +1471,7 @@ function endRound(){
   if(state.mode === "perguntas"){
     resultTheme.textContent = `Modo · Perguntas`;
     document.getElementById("resultWordLabel").textContent = "A pergunta era";
-    resultWord.innerHTML = `${escapeHTML(state.question.q)} <span class="sep">·</span> <span style="color:var(--accent)">${escapeHTML(state.question.c)}</span>`;
+    resultWord.innerHTML = `${escapeHTML(state.question.q)}`;
     resultWord.classList.add("long");
   } else {
     resultTheme.textContent = `Tema · ${THEMES[state.themeKey].label}`;
