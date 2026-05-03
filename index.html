@@ -754,6 +754,46 @@
   .anim-5{animation:fadeUp .9s cubic-bezier(.2,.7,.2,1) both;animation-delay:.6s}
   .anim-6{animation:fadeUp .9s cubic-bezier(.2,.7,.2,1) both;animation-delay:.74s}
 
+  /* — credit link — */
+  .credit-link{
+    color:var(--ink-dim);
+    text-decoration:none;
+    transition:color .25s;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .credit-link b{color:var(--ink);font-weight:500;letter-spacing:.04em}
+  .credit-link:hover{color:var(--accent)}
+  .credit-link:hover b{color:var(--accent)}
+
+  /* — scroll reveal — */
+  .scroll-reveal{
+    opacity:0;
+    transform:translateY(28px) scale(.985);
+    transition:opacity .85s cubic-bezier(.2,.7,.25,1), transform .85s cubic-bezier(.2,.7,.25,1);
+    will-change:opacity, transform;
+  }
+  .scroll-reveal.is-visible{opacity:1;transform:none}
+  .scroll-reveal[data-delay="1"].is-visible{transition-delay:.08s}
+  .scroll-reveal[data-delay="2"].is-visible{transition-delay:.16s}
+  .scroll-reveal[data-delay="3"].is-visible{transition-delay:.24s}
+  .scroll-reveal[data-delay="4"].is-visible{transition-delay:.32s}
+  @media(prefers-reduced-motion:reduce){
+    .scroll-reveal{opacity:1!important;transform:none!important;transition:none!important}
+  }
+
+  /* — screen transitions: fade + zoom — */
+  .screen{
+    transition:opacity .5s cubic-bezier(.2,.7,.25,1), transform .5s cubic-bezier(.2,.7,.25,1);
+    transform-origin:center 38%;
+    will-change:opacity, transform;
+  }
+  .screen.entering{opacity:0;transform:scale(1.05)}
+  .screen.exiting{opacity:0;transform:scale(.94)}
+  @media(prefers-reduced-motion:reduce){
+    .screen{transition:none}
+    .screen.entering, .screen.exiting{opacity:1;transform:none}
+  }
+
   /* — utilities — */
   .hide{display:none !important}
   .ital{font-style:italic;font-family:var(--serif);font-weight:300}
@@ -766,7 +806,7 @@
 <body>
 
 <!-- ============== SETUP SCREEN ============== -->
-<main id="setupScreen" class="frame">
+<main id="setupScreen" class="frame screen">
 
   <header class="mast">
     <div class="l">N°01 / Edição 2026</div>
@@ -785,7 +825,7 @@
     </p>
   </section>
 
-  <section class="section anim-4">
+  <section class="section scroll-reveal">
     <div class="sec-no">Cap. <span class="num">01</span> — Modo</div>
     <div class="sec-body">
       <div class="sec-head">
@@ -814,7 +854,7 @@
     </div>
   </section>
 
-  <section class="section anim-5" id="themesSection">
+  <section class="section scroll-reveal" id="themesSection">
     <div class="sec-no">Cap. <span class="num">03</span> — Universo</div>
     <div class="sec-body">
       <div class="sec-head">
@@ -825,7 +865,7 @@
     </div>
   </section>
 
-  <section class="section anim-6">
+  <section class="section scroll-reveal">
     <div class="sec-no">Cap. <span class="num">04</span> — Regras</div>
     <div class="sec-body">
       <div class="sec-head">
@@ -858,7 +898,7 @@
     </div>
   </section>
 
-  <section class="cta-row">
+  <section class="cta-row scroll-reveal">
     <button id="startBtn" class="cta" disabled>
       <span class="lbl">Iniciar a rodada<span style="color:var(--ink-dim)">.</span></span>
       <span class="arr">PASSAR O CELULAR →</span>
@@ -866,14 +906,14 @@
   </section>
 
   <footer class="colophon">
-    <span>© Edição local</span>
+    <span>Criado por <a class="credit-link" href="https://instagram.com/okaikbarreto" target="_blank" rel="noopener noreferrer"><b>Kaik Barreto</b></a></span>
     <span class="rule"></span>
     <span id="footHint">3 jogadores · Sem tema · 1 impostor</span>
   </footer>
 </main>
 
 <!-- ============== REVEAL SCREEN ============== -->
-<main id="revealScreen" class="reveal-wrap hide">
+<main id="revealScreen" class="reveal-wrap screen hide">
   <div class="reveal-top">
     <button id="revealBack" type="button">← Voltar ao elenco</button>
     <div class="progress" id="progressTrack"></div>
@@ -893,7 +933,7 @@
 </main>
 
 <!-- ============== GAME SCREEN ============== -->
-<main id="gameScreen" class="game-wrap hide">
+<main id="gameScreen" class="game-wrap screen hide">
   <div class="game-head">
     <button id="gameBack" type="button">← Encerrar rodada</button>
     <span>Discussão · <span id="roundLabel">Rodada 01</span></span>
@@ -901,7 +941,7 @@
   </div>
 
   <div class="game-body">
-    <div class="game-prompt">
+    <div class="game-prompt scroll-reveal">
       <span class="small" id="turnEyebrow">Vez de dar a dica</span>
       <div class="big" id="turnName">—<span class="pt">.</span></div>
       <div class="meta ital" id="turnMeta">Diga uma palavra ou frase curta relacionada à palavra secreta. Sem entregá-la, sem mentir.</div>
@@ -909,7 +949,7 @@
 
     <div class="order-list" id="orderList"></div>
 
-    <div class="game-actions">
+    <div class="game-actions scroll-reveal" data-delay="2">
       <button class="gbtn" id="nextTurn">
         <span class="l">Próximo a falar</span>
         <span class="a">PRÓXIMO →</span>
@@ -923,7 +963,7 @@
 </main>
 
 <!-- ============== RESULT SCREEN ============== -->
-<main id="resultScreen" class="frame hide">
+<main id="resultScreen" class="frame screen hide">
   <header class="mast">
     <div class="l">Fim da Rodada</div>
     <div class="c"><span class="dot"></span>Veredito<span class="dot"></span></div>
@@ -939,15 +979,15 @@
     <p class="lede anim-3">A palavra é revelada. O impostor é apontado. Discutam o que entregou e joguem novamente.</p>
   </section>
 
-  <section class="section anim-4">
+  <section class="section scroll-reveal">
     <div class="sec-no">Cap. <span class="num">∞</span> — Reveal</div>
     <div class="sec-body">
       <div class="result-card">
-        <div class="result-row">
+        <div class="result-row scroll-reveal">
           <span class="lbl" id="resultWordLabel">A palavra secreta era</span>
           <span class="val" id="resultWord">—<span class="pt">.</span></span>
         </div>
-        <div class="result-row">
+        <div class="result-row scroll-reveal" data-delay="1">
           <span class="lbl" id="resultImpostorLabel">O impostor era</span>
           <span class="val accusation" id="resultImpostors">—<span class="pt">.</span></span>
           <span class="small">Aplaudam, ridicularizem, joguem novamente.</span>
@@ -968,7 +1008,7 @@
   </section>
 
   <footer class="colophon">
-    <span>© Edição local</span>
+    <span>Criado por <a class="credit-link" href="https://instagram.com/okaikbarreto" target="_blank" rel="noopener noreferrer"><b>Kaik Barreto</b></a></span>
     <span class="rule"></span>
     <span>Boa sorte na próxima.</span>
   </footer>
@@ -1206,6 +1246,8 @@ function init(){
   bind();
   applyMode();
   syncCTA();
+  // observe scroll reveals on the initial setup screen
+  observeScrollReveals(setupScreen);
 }
 
 /* ─────────────────────────────────────────────
@@ -1217,8 +1259,9 @@ function renderModes(){
     const m = MODES[key];
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.className = "theme mode-card";
+    btn.className = "theme mode-card scroll-reveal";
     btn.dataset.key = key;
+    btn.dataset.delay = String(i);
     btn.innerHTML = `
       <span class="tno">M°${String(i+1).padStart(2,"0")}</span>
       <span class="tname">${m.label}</span>
@@ -1228,6 +1271,7 @@ function renderModes(){
     modesGrid.appendChild(btn);
   });
   highlightMode();
+  observeScrollReveals(modesGrid);
 }
 function highlightMode(){
   modesGrid.querySelectorAll(".mode-card").forEach(el => {
@@ -1243,11 +1287,11 @@ function selectMode(key){
   syncCTA();
 }
 function applyMode(){
-  // toggle themes section visibility
-  if(state.mode === "perguntas"){
-    themesSection.classList.add("hide");
-  } else {
+  // themes section is only relevant for "palavra" mode
+  if(state.mode === "palavra"){
     themesSection.classList.remove("hide");
+  } else {
+    themesSection.classList.add("hide");
   }
 }
 
@@ -1261,8 +1305,9 @@ function renderThemes(){
     const t = THEMES[key];
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.className = "theme";
+    btn.className = "theme scroll-reveal";
     btn.dataset.key = key;
+    btn.dataset.delay = String(Math.min(i % 4, 4));
     btn.innerHTML = `
       <span class="tno">N°${String(i+1).padStart(2,"0")}</span>
       <span class="tname">${t.label}</span>
@@ -1271,6 +1316,7 @@ function renderThemes(){
     btn.addEventListener("click", () => selectTheme(key));
     themesGrid.appendChild(btn);
   });
+  observeScrollReveals(themesGrid);
 }
 function selectTheme(key){
   state.themeKey = key;
@@ -1305,7 +1351,7 @@ function renderPlayers(){
     emptyNote.classList.add("hide");
   }
   playersList.innerHTML = state.players.map((p,i) => `
-    <div class="player">
+    <div class="player scroll-reveal" data-delay="${i % 4}">
       <span class="pno">N°${String(i+1).padStart(2,"0")}</span>
       <span class="pname">${escapeHTML(p.name)}</span>
       <button class="px" type="button" data-id="${p.id}" aria-label="Remover ${escapeHTML(p.name)}">remover ×</button>
@@ -1315,6 +1361,11 @@ function renderPlayers(){
     btn.addEventListener("click", () => removePlayer(btn.dataset.id));
   });
   playerCountEl.textContent = state.players.length;
+  observeScrollReveals(playersList);
+  // immediately reveal items already in viewport (newly added)
+  requestAnimationFrame(() => {
+    $$(".player.scroll-reveal").forEach(el => el.classList.add("is-visible"));
+  });
 }
 
 /* ─────────────────────────────────────────────
@@ -1555,12 +1606,13 @@ function renderTurn(){
   const cur = order[state.turnIdx];
   turnName.innerHTML = `${escapeHTML(cur.name)}<span class="pt">.</span>`;
   orderList.innerHTML = order.map((p,i)=>`
-    <div class="order-item ${i===state.turnIdx?'active':''}">
+    <div class="order-item scroll-reveal ${i===state.turnIdx?'active':''}" data-delay="${i % 4}">
       <span class="ono">N°${String(i+1).padStart(2,"0")}</span>
       <span class="oname">${escapeHTML(p.name)}</span>
       <span class="ostate">${i<state.turnIdx?'já falou':i===state.turnIdx?'falando agora':'aguardando'}</span>
     </div>
   `).join("");
+  observeScrollReveals(orderList);
 }
 function nextTurn(){
   state.turnIdx = (state.turnIdx + 1) % state.shuffledOrder.length;
@@ -1591,14 +1643,60 @@ function endRound(){
 }
 
 /* ─────────────────────────────────────────────
-   SCREEN MGMT
+   SCREEN MGMT — fade + zoom transition
    ───────────────────────────────────────────── */
+const SCREENS = { setup: setupScreen, reveal: revealScreen, game: gameScreen, result: resultScreen };
+const SCREEN_TRANSITION = 500; // ms — must match CSS
+
 function showScreen(name){
-  setupScreen.classList.toggle("hide", name !== "setup");
-  revealScreen.classList.toggle("hide", name !== "reveal");
-  gameScreen.classList.toggle("hide", name !== "game");
-  resultScreen.classList.toggle("hide", name !== "result");
-  window.scrollTo({top:0, behavior:"instant"});
+  const next = SCREENS[name];
+  if(!next) return;
+  const current = Object.values(SCREENS).find(s => !s.classList.contains("hide"));
+  if(current === next){
+    return;
+  }
+  if(!current){
+    // first show — appear with entering animation
+    next.classList.remove("hide");
+    next.classList.add("entering");
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      next.classList.remove("entering");
+      observeScrollReveals(next);
+    }));
+    return;
+  }
+  // fade out current, then swap and fade in next
+  current.classList.add("exiting");
+  setTimeout(() => {
+    current.classList.add("hide");
+    current.classList.remove("exiting");
+    next.classList.remove("hide");
+    next.classList.add("entering");
+    window.scrollTo({top:0, behavior:"instant"});
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      next.classList.remove("entering");
+      observeScrollReveals(next);
+    }));
+  }, SCREEN_TRANSITION);
+}
+
+/* ─────────────────────────────────────────────
+   SCROLL REVEAL — IntersectionObserver
+   ───────────────────────────────────────────── */
+const scrollObserver = ("IntersectionObserver" in window) ? new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add("is-visible");
+      scrollObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08, rootMargin: "0px 0px -40px 0px" }) : null;
+
+function observeScrollReveals(root = document){
+  if(!scrollObserver) return;
+  root.querySelectorAll(".scroll-reveal:not(.is-visible)").forEach(el => {
+    scrollObserver.observe(el);
+  });
 }
 
 /* ─────────────────────────────────────────────
