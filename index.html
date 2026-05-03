@@ -227,6 +227,7 @@
     grid-template-columns:repeat(4,1fr);
     gap:0;
     border:1px solid var(--rule);
+    border-bottom:0;
   }
   @media(max-width:780px){.themes{grid-template-columns:repeat(2,1fr)}}
   .theme{
@@ -239,12 +240,9 @@
     position:relative;
   }
   .theme:nth-child(4n){border-right:0}
-  .theme:nth-last-child(-n+4){border-bottom:0}
   @media(max-width:780px){
     .theme:nth-child(4n){border-right:1px solid var(--rule)}
     .theme:nth-child(2n){border-right:0}
-    .theme:nth-last-child(-n+4){border-bottom:1px solid var(--rule)}
-    .theme:nth-last-child(-n+2){border-bottom:0}
   }
   .theme .tno{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--ink-dim);text-transform:uppercase}
   .theme .tname{font-family:var(--serif);font-style:italic;font-weight:300;font-size:26px;line-height:1.05}
@@ -415,15 +413,16 @@
     position:absolute;bottom:78px;left:24px;right:24px;
     line-height:1.4;
   }
-  .reveal-card.back-word .hide{
+  .reveal-card.back-word .dismiss{
     position:absolute;bottom:24px;left:24px;right:24px;
     border:1px solid var(--rule);
     padding:14px 18px;
     font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;
     color:var(--ink);
+    background:transparent;cursor:pointer;
     transition:background .15s, color .15s;
   }
-  .reveal-card.back-word .hide:hover{background:var(--ink);color:var(--paper)}
+  .reveal-card.back-word .dismiss:hover{background:var(--ink);color:var(--paper)}
 
   /* — back: impostor (inverted) — */
   .reveal-card.back-impostor{
@@ -450,15 +449,15 @@
     position:absolute;bottom:78px;left:24px;right:24px;
     line-height:1.4;
   }
-  .reveal-card.back-impostor .hide{
+  .reveal-card.back-impostor .dismiss{
     position:absolute;bottom:24px;left:24px;right:24px;
     border:1px solid #5a554a;
     padding:14px 18px;
     font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;
-    color:var(--paper);
+    color:var(--paper);background:transparent;cursor:pointer;
     transition:background .15s, color .15s, border-color .15s;
   }
-  .reveal-card.back-impostor .hide:hover{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+  .reveal-card.back-impostor .dismiss:hover{background:var(--paper);color:var(--ink);border-color:var(--paper)}
 
   .reveal-bottom{
     text-align:center;
@@ -824,6 +823,21 @@ const THEMES = {
     label: "Países",
     desc: "Atlas geográfico",
     words: ["Brasil","Japão","França","Itália","Egito","Austrália","Canadá","México","Argentina","Alemanha","Inglaterra","Índia","China","Rússia","Marrocos","Tailândia","Grécia","Noruega","Portugal","Espanha","Estados Unidos","Holanda","Suécia","Suíça","Áustria","Polônia","Turquia","Indonésia","Vietnã","Coreia do Sul","Chile","Peru","Colômbia","Cuba","Jamaica","Quênia","África do Sul","Nova Zelândia","Islândia","Irlanda"]
+  },
+  naruto: {
+    label: "Naruto",
+    desc: "Vila da Folha & além",
+    words: ["Naruto Uzumaki","Sasuke Uchiha","Sakura Haruno","Kakashi Hatake","Itachi Uchiha","Madara Uchiha","Pain","Hinata Hyuga","Shikamaru Nara","Rock Lee","Gaara","Jiraiya","Tsunade","Orochimaru","Minato Namikaze","Obito Uchiha","Konan","Deidara","Sasori","Kisame","Hidan","Kakuzu","Konohamaru","Neji Hyuga","Tenten","Choji Akimichi","Ino Yamanaka","Kiba Inuzuka","Shino Aburame","Kurama","Hashirama","Tobirama","Kabuto","Zabuza","Haku","Rasengan","Chidori","Sharingan","Byakugan","Rinnegan","Hokage","Akatsuki","Konoha","Suna","Edo Tensei","Susanoo","Amaterasu","Tsukuyomi","Bijuu","Ninjutsu","Genjutsu"]
+  },
+  politicabr: {
+    label: "Política BR",
+    desc: "Figuras e marcos",
+    words: ["Lula","FHC","Dilma Rousseff","Michel Temer","Jair Bolsonaro","Tancredo Neves","José Sarney","Fernando Collor","Itamar Franco","João Goulart","Getúlio Vargas","Juscelino Kubitschek","Tiradentes","Princesa Isabel","Dom Pedro II","Olavo Bilac","Rui Barbosa","PT","PSDB","PL","MDB","PSOL","PSB","PCdoB","Novo","União Brasil","Centrão","Impeachment","STF","TSE","Câmara dos Deputados","Senado","Plenário","Constituição de 1988","Congresso","Planalto","Eleições","Reforma da Previdência","Diretas Já","Mensalão","Lava Jato","CPI","Voto","Urna Eletrônica","Esquerda","Direita","Federalismo","Ditadura Militar","Redemocratização","Plano Real"]
+  },
+  bolsonaro: {
+    label: "Bolsonaro",
+    desc: "Universo bolsonarista",
+    words: ["Jair Bolsonaro","Mito","Capitão","17","Imbrochável","Cloroquina","Caneta Bic","Tchutchucão","Facada de Adelio","Michelle Bolsonaro","Eduardo Bolsonaro","Flávio Bolsonaro","Carlos Bolsonaro","Hamilton Mourão","Paulo Guedes","Sérgio Moro","Damares Alves","Augusto Heleno","Onyx Lorenzoni","Tereza Cristina","Ricardo Salles","Eduardo Pazuello","Ernesto Araújo","Abraham Weintraub","Olavo de Carvalho","Pastor Silas Malafaia","PL","Aliança pelo Brasil","Posse 2019","Motociata","Live de Quarta","8 de Janeiro","Brasil Acima de Tudo","Deus Acima de Todos","Família Tradicional","Verde e Amarelo","Patriotas","Mamadeira de Piroca","Kit Gay","Pacote Anticrime","Auxílio Brasil","Reforma da Previdência","Armamento Civil","Tropa de Elite","Saudade","CPMI","Vacina","SUS","Fake News","Bolsominion"]
   }
 };
 
@@ -1052,22 +1066,28 @@ function renderRevealStep(){
 }
 
 function setRevealFront(name){
+  const counter = revealCounter.textContent;
   revealCard.className = "reveal-card front";
   revealCard.innerHTML = `
     <span class="who">Passando para</span>
-    <span class="num">${revealCounter.textContent}</span>
+    <span class="num">${counter}</span>
     <span class="name">${escapeHTML(name)}<span class="pt">.</span></span>
     <button type="button" class="tap" id="tapToReveal">Tocar para revelar</button>
     <span class="corner bl">Discrição</span>
     <span class="corner br">Não mostre a ninguém</span>
   `;
-  revealCard.onclick = doReveal;
+  revealCard.onclick = null;
+  document.getElementById("tapToReveal").addEventListener("click", e => {
+    e.stopPropagation();
+    doReveal();
+  });
 }
 
 function doReveal(){
   const player = state.shuffledOrder[state.revealIdx];
   const isImpostor = state.impostorIds.includes(player.id);
   const themeName = THEMES[state.themeKey].label;
+  const counter = revealCounter.textContent;
 
   if(isImpostor){
     revealCard.className = "reveal-card back-impostor";
@@ -1075,24 +1095,27 @@ function doReveal(){
       ? `Tema: <b style="color:var(--paper)">${themeName}</b>. Tente se misturar.`
       : `Disfarce. Você não sabe a palavra. Tente descobrir.`;
     revealCard.innerHTML = `
-      <span class="label">Você é</span>
+      <span class="label">${escapeHTML(player.name)} · ${counter}</span>
       <span class="theme-tag">${state.hintForImpostor ? themeName : "—"}</span>
       <span class="word">Impostor<span class="pt">.</span></span>
       <span class="hint">${hintLine}</span>
-      <button type="button" class="hide" id="hideCardBtn">Esconder e passar →</button>
+      <button type="button" class="dismiss" id="hideCardBtn">Esconder e passar →</button>
     `;
   } else {
     revealCard.className = "reveal-card back-word";
     revealCard.innerHTML = `
-      <span class="label">Palavra secreta</span>
+      <span class="label">${escapeHTML(player.name)} · ${counter}</span>
       <span class="theme-tag">${themeName}</span>
       <span class="word">${escapeHTML(state.word)}<span class="pt">.</span></span>
       <span class="hint">Dê uma dica relacionada — sem entregar a palavra.</span>
-      <button type="button" class="hide" id="hideCardBtn">Esconder e passar →</button>
+      <button type="button" class="dismiss" id="hideCardBtn">Esconder e passar →</button>
     `;
   }
   revealCard.onclick = null;
-  $("#hideCardBtn").addEventListener("click", advanceReveal);
+  document.getElementById("hideCardBtn").addEventListener("click", e => {
+    e.stopPropagation();
+    advanceReveal();
+  });
 }
 
 function advanceReveal(){
