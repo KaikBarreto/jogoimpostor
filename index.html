@@ -499,27 +499,24 @@
     font-family:var(--serif);font-style:italic;font-weight:200;
     font-size:clamp(40px, 11vw, 96px);
     line-height:.95;letter-spacing:-.03em;
-    margin-bottom:18px;
     padding:0 8px;word-break:break-word;
   }
   .reveal-card.front .name .pt{color:var(--ink-dim)}
   .reveal-card.front .tap{
-    font-family:var(--mono);font-size:clamp(10px,1.2vw,11px);letter-spacing:.22em;text-transform:uppercase;color:var(--ink-dim);
+    position:absolute;
+    bottom:clamp(20px,3vw,28px);
+    left:clamp(20px,3vw,28px);
+    right:clamp(20px,3vw,28px);
     border:1px solid var(--rule);
-    padding:14px 22px;min-height:48px;
-    margin-top:10px;
+    padding:14px 18px;min-height:48px;
+    font-family:var(--mono);font-size:clamp(10px,1.2vw,11px);letter-spacing:.22em;text-transform:uppercase;
+    color:var(--ink-dim);
+    background:transparent;cursor:pointer;
     transition:background .15s, color .15s, border-color .15s;
+    z-index:2;
   }
   .reveal-card.front:hover .tap{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-  .reveal-card.front .corner{
-    position:absolute;
-    font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--ink-faint);
-  }
-  .reveal-card.front .corner.bl{bottom:clamp(14px,3vw,24px);left:clamp(14px,3vw,24px)}
-  .reveal-card.front .corner.br{bottom:clamp(14px,3vw,24px);right:clamp(14px,3vw,24px)}
-  @media(max-width:420px){
-    .reveal-card.front .corner{display:none}
-  }
+  .reveal-card.front .corner{display:none}
 
   /* —————— PLAYING CARD: shared structure —————— */
   .reveal-card.playing{
