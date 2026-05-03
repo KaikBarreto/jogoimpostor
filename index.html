@@ -427,7 +427,26 @@
     cursor:pointer;
     overflow:hidden;
   }
-  .reveal-card.front:hover{background:var(--paper-2)}
+  .reveal-card.front{
+    background:
+      radial-gradient(70% 50% at 30% 25%, rgba(255,255,255,.03), transparent 60%),
+      radial-gradient(60% 40% at 80% 90%, rgba(230,57,70,.05), transparent 70%),
+      linear-gradient(160deg, #14130f 0%, #0b0b0a 100%);
+  }
+  .reveal-card.front::before{
+    content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.7 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    opacity:.09;mix-blend-mode:overlay;
+  }
+  .reveal-card.front::after{
+    content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+    background:repeating-linear-gradient(45deg, transparent 0 30px, rgba(243,239,230,.02) 30px 31px);
+  }
+  .reveal-card.front > *{position:relative;z-index:1}
+  .reveal-card.front:hover{background:
+      radial-gradient(70% 50% at 30% 25%, rgba(255,255,255,.05), transparent 60%),
+      radial-gradient(60% 40% at 80% 90%, rgba(230,57,70,.07), transparent 70%),
+      linear-gradient(160deg, #1a1813 0%, #0f0e0d 100%)}
   .reveal-card.front .who{
     font-family:var(--mono);font-size:clamp(10px,1.2vw,11px);letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);
     position:absolute;top:clamp(14px,3vw,24px);left:clamp(14px,3vw,24px);
