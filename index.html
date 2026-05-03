@@ -1000,26 +1000,26 @@ const MODES = {
 };
 
 const STORIES = [
-  { t: "O Anel Dourado", p: "Marcos acordou com um anel dourado na mão e nenhuma lembrança de como ele chegou ali." },
-  { t: "Reunião de Costas", p: "A reunião começou normal, até que o chefe entrou andando de costas e não disse uma palavra." },
-  { t: "O Pacote Vermelho", p: "Quando ela abriu o pacote, a primeira coisa que viu foi uma carta escrita em vermelho." },
-  { t: "Carro na Padaria", p: "Chovia tanto naquela noite que ninguém reparou no carro abandonado em frente à padaria." },
-  { t: "13º Andar", p: "O elevador parou no 13º andar — só que o prédio só tinha 12." },
-  { t: "Ligação às 3h", p: "Carla recebeu uma ligação às 3h da manhã. Era a voz dela mesma do outro lado." },
-  { t: "Latidos pro Nada", p: "Foi na terceira vez que o cachorro latiu para o nada que Pedro decidiu se mudar." },
-  { t: "Três Palavras", p: "O e-mail tinha apenas três palavras: 'Não vá amanhã.'" },
-  { t: "Acordamos na Floresta", p: "Acordamos no meio da floresta, todos vestidos do mesmo jeito, sem saber por quê." },
-  { t: "A Caixa de Chá", p: "A última coisa que a vovó disse antes de morrer foi: 'Não abram a caixa de chá.'" },
-  { t: "Os Três Irmãos", p: "Os três irmãos prometeram nunca mais voltar àquele restaurante. Hoje, estavam de volta." },
-  { t: "Uber Estranho", p: "O motorista de Uber se virou e perguntou: 'É a primeira vez que você vê esse endereço também?'" },
-  { t: "Cachorro Falante", p: "Quando o relógio bateu meia-noite, o cachorro da casa começou a falar." },
-  { t: "Bilhete na Porta", p: "O bilhete embaixo da porta dizia apenas: 'Eu sei o que você fez no verão passado.'" },
-  { t: "Casa de Praia", p: "Era pra ser uma viagem normal de fim de semana até a casa de praia da tia. Não era." },
-  { t: "A Vizinha", p: "A vizinha sempre saía às 7h em ponto. Naquele dia, ela simplesmente não saiu." },
-  { t: "Aula Final", p: "O professor entrou na sala e escreveu no quadro: 'Hoje vocês vão me julgar.'" },
-  { t: "Palhaço Sem Convite", p: "A festa começou perfeita — até o palhaço perceber que ninguém tinha contratado palhaço." },
-  { t: "Airbnb", p: "Entramos no Airbnb e tinha uma carta sobre a mesa: 'Vocês são os terceiros este mês.'" },
-  { t: "Antes do Voo", p: "Dois minutos antes do voo decolar, todos os celulares tocaram ao mesmo tempo com o mesmo som." }
+  { t: "O Anel Dourado",        g: "Mistério",           k: ["anel","manhã","memória"],          p: "Marcos acordou com um anel dourado na mão e nenhuma lembrança de como ele chegou ali." },
+  { t: "Reunião de Costas",     g: "Comédia absurda",    k: ["reunião","chefe","silêncio"],      p: "A reunião começou normal, até que o chefe entrou andando de costas e não disse uma palavra." },
+  { t: "O Pacote Vermelho",     g: "Suspense",           k: ["pacote","carta","vermelho"],       p: "Quando ela abriu o pacote, a primeira coisa que viu foi uma carta escrita em vermelho." },
+  { t: "Carro na Padaria",      g: "Mistério urbano",    k: ["chuva","carro","padaria"],         p: "Chovia tanto naquela noite que ninguém reparou no carro abandonado em frente à padaria." },
+  { t: "13º Andar",             g: "Sobrenatural",       k: ["elevador","andar","prédio"],       p: "O elevador parou no 13º andar — só que o prédio só tinha 12." },
+  { t: "Ligação às 3h",         g: "Terror psicológico", k: ["ligação","madrugada","voz"],       p: "Carla recebeu uma ligação às 3h da manhã. Era a voz dela mesma do outro lado." },
+  { t: "Latidos pro Nada",      g: "Suspense",           k: ["cachorro","latido","mudança"],     p: "Foi na terceira vez que o cachorro latiu para o nada que Pedro decidiu se mudar." },
+  { t: "Três Palavras",         g: "Mistério",           k: ["e-mail","aviso","amanhã"],         p: "O e-mail tinha apenas três palavras: 'Não vá amanhã.'" },
+  { t: "Acordamos na Floresta", g: "Estranho",           k: ["floresta","roupas iguais","despertar"], p: "Acordamos no meio da floresta, todos vestidos do mesmo jeito, sem saber por quê." },
+  { t: "A Caixa de Chá",        g: "Drama familiar",     k: ["vovó","caixa","chá"],              p: "A última coisa que a vovó disse antes de morrer foi: 'Não abram a caixa de chá.'" },
+  { t: "Os Três Irmãos",        g: "Drama / Mistério",   k: ["irmãos","restaurante","promessa"], p: "Os três irmãos prometeram nunca mais voltar àquele restaurante. Hoje, estavam de volta." },
+  { t: "Uber Estranho",         g: "Terror urbano",      k: ["Uber","motorista","endereço"],     p: "O motorista de Uber se virou e perguntou: 'É a primeira vez que você vê esse endereço também?'" },
+  { t: "Cachorro Falante",      g: "Surreal",            k: ["cachorro","meia-noite","casa"],    p: "Quando o relógio bateu meia-noite, o cachorro da casa começou a falar." },
+  { t: "Bilhete na Porta",      g: "Suspense",           k: ["bilhete","porta","verão"],         p: "O bilhete embaixo da porta dizia apenas: 'Eu sei o que você fez no verão passado.'" },
+  { t: "Casa de Praia",         g: "Aventura sombria",   k: ["viagem","tia","casa de praia"],    p: "Era pra ser uma viagem normal de fim de semana até a casa de praia da tia. Não era." },
+  { t: "A Vizinha",             g: "Mistério urbano",    k: ["vizinha","7h","rotina"],           p: "A vizinha sempre saía às 7h em ponto. Naquele dia, ela simplesmente não saiu." },
+  { t: "Aula Final",            g: "Drama escolar",      k: ["professor","quadro","julgamento"], p: "O professor entrou na sala e escreveu no quadro: 'Hoje vocês vão me julgar.'" },
+  { t: "Palhaço Sem Convite",   g: "Terror absurdo",     k: ["festa","palhaço","convite"],       p: "A festa começou perfeita — até o palhaço perceber que ninguém tinha contratado palhaço." },
+  { t: "Airbnb",                g: "Terror",             k: ["Airbnb","carta","terceiros"],      p: "Entramos no Airbnb e tinha uma carta sobre a mesa: 'Vocês são os terceiros este mês.'" },
+  { t: "Antes do Voo",          g: "Sobrenatural",       k: ["voo","celulares","som"],           p: "Dois minutos antes do voo decolar, todos os celulares tocaram ao mesmo tempo com o mesmo som." }
 ];
 
 const QUESTIONS = [
@@ -1432,7 +1432,9 @@ function doReveal(){
     const title = `Impostor<span class="pt">.</span>`;
     let sub;
     if(isStoryMode){
-      sub = `Você nunca leu o início. Quando for sua vez, continue a história sem entregar que não sabe.`;
+      const s = state.story;
+      const keywords = s.k.map(k => `<b>${escapeHTML(k)}</b>`).join(" · ");
+      sub = `Pista: ${escapeHTML(s.g)} · ${keywords}. Use estas palavras pra se misturar.`;
     } else if(isQuestionMode){
       sub = `Você não sabe a pergunta dos outros. Responda algo <b>vago</b> e tente se misturar.`;
     } else if(state.hintForImpostor){
