@@ -84,7 +84,7 @@
   .mast .l{justify-self:start}
   .mast .c{justify-self:center}
   .mast .r{justify-self:end}
-  .mast .dot{display:inline-block;width:6px;height:6px;background:var(--ink);border-radius:50%;margin:0 6px;vertical-align:middle;animation:pulse 2.4s ease-in-out infinite}
+  .mast .dot{display:inline-block;width:6px;height:6px;background:var(--accent);border-radius:50%;margin:0 6px;vertical-align:middle;animation:pulse 2.4s ease-in-out infinite;box-shadow:0 0 8px rgba(230,57,70,.6)}
   @media(max-width:520px){
     .mast{grid-template-columns:1fr 1fr;gap:8px}
     .mast .c{display:none}
@@ -115,7 +115,7 @@
     font-variation-settings:"opsz" 144, "SOFT" 50;
   }
   .hero h1 em{font-style:normal;font-weight:200}
-  .hero h1 .pt{display:inline-block;color:var(--ink-dim);transform:translateY(-.05em)}
+  .hero h1 .pt{display:inline-block;color:var(--accent);transform:translateY(-.05em)}
   .hero .lede{
     font-family:var(--serif);
     font-weight:300;
@@ -146,7 +146,7 @@
     text-transform:uppercase;
     color:var(--ink-dim);
   }
-  .sec-no .num{color:var(--ink);font-weight:500}
+  .sec-no .num{color:var(--accent);font-weight:500}
   .sec-body{display:grid;gap:clamp(14px,2vw,18px);min-width:0}
 
   .sec-head{
@@ -162,11 +162,12 @@
     line-height:1;
     letter-spacing:-.02em;
   }
+  .sec-head h2 .pt{color:var(--accent)}
   .sec-head .tag{
     font-family:var(--mono);font-size:clamp(10px,1.2vw,11px);letter-spacing:.14em;
     text-transform:uppercase;color:var(--ink-dim);
   }
-  .sec-head .tag b{color:var(--ink);font-weight:500}
+  .sec-head .tag b{color:var(--accent);font-weight:500}
 
   /* — players input — */
   .player-input{
@@ -267,13 +268,25 @@
   @media(max-width:380px){
     .theme{border-right:0!important}
   }
+
+  /* mode cards — always 2-col */
+  .themes.modes{grid-template-columns:repeat(2,minmax(0,1fr));border-bottom:1px solid var(--rule)}
+  @media(max-width:480px){.themes.modes{grid-template-columns:1fr}}
+  .themes.modes .theme{padding:24px 22px}
+  .themes.modes .theme:nth-child(2n){border-right:0}
+  .themes.modes .theme .tname{font-size:clamp(22px,3vw,32px)}
+  @media(max-width:480px){
+    .themes.modes .theme{border-right:0!important}
+  }
   .theme .tno{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--ink-dim);text-transform:uppercase}
   .theme .tname{font-family:var(--serif);font-style:italic;font-weight:300;font-size:clamp(20px,2.4vw,26px);line-height:1.05;word-break:break-word}
   .theme .tcount{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--ink-faint);text-transform:uppercase}
   .theme:hover{background:var(--paper-2)}
   .theme:hover .tno{color:var(--ink)}
-  .theme.active{background:var(--ink);color:var(--paper)}
-  .theme.active .tno,.theme.active .tcount{color:var(--paper);opacity:.7}
+  .theme.active{background:linear-gradient(160deg, rgba(230,57,70,.16), rgba(230,57,70,.03));color:var(--ink);box-shadow:inset 0 0 0 1px var(--accent)}
+  .theme.active .tno{color:var(--accent);opacity:1}
+  .theme.active .tname{color:var(--ink)}
+  .theme.active .tcount{color:var(--accent);opacity:.7}
 
   /* — settings — */
   .setting-row{
@@ -305,6 +318,7 @@
   .stepper .val{
     width:60px;text-align:center;
     font-family:var(--serif);font-style:italic;font-size:24px;font-weight:300;
+    color:var(--accent);
     border-left:1px solid var(--rule);border-right:1px solid var(--rule);
     line-height:48px;
   }
@@ -428,87 +442,153 @@
     .reveal-card.front .corner{display:none}
   }
 
-  /* — back: word — */
-  .reveal-card.back-word{
-    background:var(--paper);color:var(--ink);
+  /* —————— PLAYING CARD: shared structure —————— */
+  .reveal-card.playing{
     cursor:default;
     border:1px solid var(--ink);
+    padding:0;
+    display:block;
+    overflow:hidden;
+    box-shadow:0 30px 60px -20px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.04) inset;
   }
-  .reveal-card.back-word .label{
-    font-family:var(--mono);font-size:clamp(10px,1.2vw,11px);letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);
-    position:absolute;top:clamp(14px,3vw,24px);left:clamp(14px,3vw,24px);
-    max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  /* paper texture (noise) */
+  .reveal-card.playing::before{
+    content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.7 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    opacity:.12;mix-blend-mode:overlay;
   }
-  .reveal-card.back-word .theme-tag{
-    font-family:var(--mono);font-size:clamp(10px,1.2vw,11px);letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);
-    position:absolute;top:clamp(14px,3vw,24px);right:clamp(14px,3vw,24px);
+  /* inner double frame */
+  .reveal-card.playing::after{
+    content:"";position:absolute;
+    top:clamp(10px,2vw,16px);left:clamp(10px,2vw,16px);right:clamp(10px,2vw,16px);bottom:clamp(10px,2vw,16px);
+    border:1px solid currentColor;opacity:.16;pointer-events:none;z-index:1;
   }
-  .reveal-card.back-word .word{
-    font-family:var(--serif);font-style:italic;font-weight:200;
-    font-size:clamp(44px, 13vw, 132px);
-    line-height:.9;letter-spacing:-.04em;
-    padding:0 8px;
-    word-break:break-word;
+  .reveal-card.playing .card-meta-top{
+    position:absolute;top:clamp(14px,2.4vw,20px);left:clamp(20px,3vw,28px);right:clamp(20px,3vw,28px);
+    display:flex;justify-content:space-between;align-items:center;gap:12px;z-index:3;
+    font-family:var(--mono);font-size:clamp(10px,1.2vw,11px);letter-spacing:.2em;text-transform:uppercase;
+    opacity:.7;
   }
-  .reveal-card.back-word .word .pt{color:var(--ink-dim)}
-  .reveal-card.back-word .hint{
-    font-family:var(--serif);font-style:italic;font-weight:300;font-size:clamp(15px,1.8vw,18px);color:var(--ink-dim);
-    position:absolute;bottom:clamp(70px,12vw,90px);left:clamp(14px,3vw,24px);right:clamp(14px,3vw,24px);
-    line-height:1.4;
-  }
-  .reveal-card.back-word .dismiss{
-    position:absolute;bottom:clamp(14px,3vw,24px);left:clamp(14px,3vw,24px);right:clamp(14px,3vw,24px);
-    border:1px solid var(--rule);
-    padding:14px 18px;min-height:48px;
-    font-family:var(--mono);font-size:clamp(10px,1.2vw,11px);letter-spacing:.22em;text-transform:uppercase;
-    color:var(--ink);
-    background:transparent;cursor:pointer;
-    transition:background .15s, color .15s;
-  }
-  .reveal-card.back-word .dismiss:hover{background:var(--ink);color:var(--paper)}
+  .reveal-card.playing .card-meta-top .who{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%}
 
-  /* — back: impostor (red) — */
-  .reveal-card.back-impostor{
-    background:var(--accent);color:var(--ink);
-    border:1px solid var(--accent);
-    cursor:default;
+  /* corner indices like a playing card (rotated 180 on opposite corner) */
+  .reveal-card.playing .corner-mark{
+    position:absolute;
+    z-index:3;
+    display:grid;justify-items:center;gap:2px;
+    font-family:var(--mono);
+    line-height:1;
   }
-  .reveal-card.back-impostor::after{
-    content:"";position:absolute;inset:0;pointer-events:none;
-    background:radial-gradient(120% 80% at 50% 0%, transparent 60%, rgba(0,0,0,.25) 100%);
+  .reveal-card.playing .corner-mark .idx{
+    font-size:clamp(11px,1.4vw,13px);font-weight:600;letter-spacing:.1em;
   }
-  .reveal-card.back-impostor .label{
-    font-family:var(--mono);font-size:clamp(10px,1.2vw,11px);letter-spacing:.2em;text-transform:uppercase;color:rgba(255,235,225,.7);
-    position:absolute;top:clamp(14px,3vw,24px);left:clamp(14px,3vw,24px);
-    max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;z-index:1;
+  .reveal-card.playing .corner-mark .suit{
+    font-size:clamp(14px,1.8vw,18px);
   }
-  .reveal-card.back-impostor .theme-tag{
-    font-family:var(--mono);font-size:clamp(10px,1.2vw,11px);letter-spacing:.2em;text-transform:uppercase;color:rgba(255,235,225,.7);
-    position:absolute;top:clamp(14px,3vw,24px);right:clamp(14px,3vw,24px);z-index:1;
+  .reveal-card.playing .corner-mark.tl{
+    top:clamp(40px,5vw,48px);left:clamp(20px,3vw,28px);
   }
-  .reveal-card.back-impostor .word{
+  .reveal-card.playing .corner-mark.br{
+    bottom:clamp(96px,16vw,124px);right:clamp(20px,3vw,28px);
+    transform:rotate(180deg);
+  }
+
+  /* center content */
+  .reveal-card.playing .card-center{
+    position:absolute;top:50%;left:clamp(20px,4vw,40px);right:clamp(20px,4vw,40px);
+    transform:translateY(-50%);
+    display:grid;gap:clamp(8px,1.4vw,14px);justify-items:center;text-align:center;
+    z-index:3;
+  }
+  .reveal-card.playing .card-eyebrow{
+    font-family:var(--mono);font-size:clamp(10px,1.2vw,11px);letter-spacing:.24em;text-transform:uppercase;
+    opacity:.65;
+  }
+  .reveal-card.playing .card-title{
     font-family:var(--serif);font-style:italic;font-weight:200;
-    font-size:clamp(44px, 12vw, 122px);
-    line-height:.9;letter-spacing:-.04em;
-    padding:0 8px;word-break:break-word;z-index:1;
-    text-shadow:0 1px 0 rgba(0,0,0,.15);
+    line-height:.9;letter-spacing:-.04em;word-break:break-word;
   }
-  .reveal-card.back-impostor .word .pt{color:rgba(255,235,225,.6)}
-  .reveal-card.back-impostor .hint{
-    font-family:var(--serif);font-style:italic;font-weight:300;font-size:clamp(15px,1.8vw,18px);color:rgba(255,235,225,.85);
-    position:absolute;bottom:clamp(70px,12vw,90px);left:clamp(14px,3vw,24px);right:clamp(14px,3vw,24px);
-    line-height:1.4;z-index:1;
+  .reveal-card.playing .card-sub{
+    font-family:var(--serif);font-style:italic;font-weight:300;
+    font-size:clamp(14px,1.6vw,17px);line-height:1.4;opacity:.78;
+    max-width:32ch;
   }
-  .reveal-card.back-impostor .hint b{color:var(--ink);font-weight:500}
-  .reveal-card.back-impostor .dismiss{
-    position:absolute;bottom:clamp(14px,3vw,24px);left:clamp(14px,3vw,24px);right:clamp(14px,3vw,24px);
-    border:1px solid rgba(255,235,225,.5);
+
+  /* dismiss action */
+  .reveal-card.playing .dismiss{
+    position:absolute;
+    bottom:clamp(20px,3vw,28px);left:clamp(20px,3vw,28px);right:clamp(20px,3vw,28px);
+    border:1px solid currentColor;
     padding:14px 18px;min-height:48px;
     font-family:var(--mono);font-size:clamp(10px,1.2vw,11px);letter-spacing:.22em;text-transform:uppercase;
-    color:var(--ink);background:transparent;cursor:pointer;z-index:1;
-    transition:background .15s, color .15s, border-color .15s;
+    background:transparent;cursor:pointer;color:inherit;z-index:3;
+    transition:background .2s, color .2s;
+    -webkit-tap-highlight-color:transparent;
   }
+
+  /* —————— back: WORD card (paper) —————— */
+  .reveal-card.back-word{
+    background:
+      radial-gradient(70% 50% at 30% 25%, rgba(255,255,255,.05), transparent 60%),
+      radial-gradient(60% 40% at 80% 90%, rgba(230,57,70,.06), transparent 70%),
+      linear-gradient(160deg, #15140f 0%, #0b0b0a 100%);
+    color:var(--ink);
+  }
+  /* geometric ornament on word card */
+  .reveal-card.back-word .ornament{
+    position:absolute;inset:0;pointer-events:none;z-index:2;
+    background:
+      repeating-linear-gradient(45deg, transparent 0 28px, rgba(243,239,230,.025) 28px 29px);
+  }
+  .reveal-card.back-word .card-title{
+    font-size:clamp(44px, 13vw, 128px);
+  }
+  .reveal-card.back-word .card-title.long{
+    font-size:clamp(24px, 5.6vw, 48px);line-height:1.1;font-weight:300;letter-spacing:-.02em;
+    max-width:22ch;
+  }
+  .reveal-card.back-word .card-title .pt{color:var(--accent)}
+  .reveal-card.back-word .dismiss{border-color:rgba(243,239,230,.35)}
+  .reveal-card.back-word .dismiss:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .reveal-card.back-word .corner-mark{color:var(--ink-dim)}
+
+  /* —————— back: IMPOSTOR card (red gradient) —————— */
+  .reveal-card.back-impostor{
+    background:
+      radial-gradient(80% 60% at 22% 18%, rgba(255,200,180,.18), transparent 55%),
+      radial-gradient(60% 50% at 80% 90%, rgba(0,0,0,.35), transparent 65%),
+      linear-gradient(155deg, #3a0810 0%, #6e1320 28%, #a82130 58%, #cd2c3c 80%, #e63946 100%);
+    color:var(--ink);
+    border-color:#f3efe6;
+  }
+  /* red ornament + diagonal hatching for texture */
+  .reveal-card.back-impostor .ornament{
+    position:absolute;inset:0;pointer-events:none;z-index:2;
+    background:
+      repeating-linear-gradient(45deg, transparent 0 22px, rgba(0,0,0,.08) 22px 23px),
+      repeating-linear-gradient(-45deg, transparent 0 80px, rgba(255,235,225,.04) 80px 81px);
+  }
+  .reveal-card.back-impostor .card-title{
+    font-size:clamp(48px, 14vw, 134px);
+    text-shadow:0 2px 0 rgba(0,0,0,.18), 0 0 40px rgba(0,0,0,.2);
+  }
+  .reveal-card.back-impostor .card-title .pt{color:rgba(255,235,225,.55)}
+  .reveal-card.back-impostor .card-sub b{color:var(--ink);font-weight:500}
+  .reveal-card.back-impostor .corner-mark{color:rgba(255,235,225,.85)}
+  .reveal-card.back-impostor .dismiss{border-color:rgba(255,235,225,.45)}
   .reveal-card.back-impostor .dismiss:hover{background:var(--ink);color:var(--accent-deep);border-color:var(--ink)}
+
+  /* center geometric mark behind title (very subtle) */
+  .reveal-card.back-impostor .center-mark{
+    position:absolute;left:50%;top:50%;
+    width:clamp(180px,40vw,280px);height:clamp(180px,40vw,280px);
+    transform:translate(-50%,-50%) rotate(45deg);
+    border:1px solid rgba(255,235,225,.08);
+    z-index:1;pointer-events:none;
+  }
+  .reveal-card.back-impostor .center-mark::before{
+    content:"";position:absolute;inset:14px;border:1px solid rgba(255,235,225,.06);
+  }
 
   .reveal-bottom{
     text-align:center;
@@ -615,6 +695,7 @@
   }
   .result-row .val.accusation .pt,
   .result-row .val.accusation .sep{color:var(--accent-deep);text-decoration:none;display:inline-block;text-decoration-line:none}
+  .result-row .val.long{font-size:clamp(20px,3.6vw,32px);line-height:1.2;font-weight:300;letter-spacing:-.01em}
   .result-row .small{font-family:var(--mono);font-size:clamp(10px,1.2vw,11px);letter-spacing:.16em;color:var(--ink-dim);text-transform:uppercase;margin-top:6px}
 
   /* — animations — */
@@ -659,15 +740,26 @@
     </div>
     <h1 class="anim-2">O Impostor<span class="pt">.</span></h1>
     <p class="lede anim-3">
-      Cadastre os jogadores, escolha um tema e <b>passe o celular</b>. Cada um descobre, em segredo, a palavra da rodada. Um deles, porém, recebe apenas uma sentença<span class="pt">:</span> <em>você é o impostor</em>. Disfarce. Deduza. Acuse.
+      Cadastre os jogadores, escolha o modo e <b>passe o celular</b>. Cada um descobre, em segredo, a palavra ou a pergunta da rodada. Um deles, porém, recebe apenas uma sentença<span class="pt">:</span> <em>você é o impostor</em>. Disfarce. Deduza. Acuse.
     </p>
   </section>
 
-  <section class="section anim-4" id="playersSection">
-    <div class="sec-no">Cap. <span class="num">01</span> — Elenco</div>
+  <section class="section anim-4">
+    <div class="sec-no">Cap. <span class="num">01</span> — Modo</div>
     <div class="sec-body">
       <div class="sec-head">
-        <h2>Os jogadores<span class="pt" style="color:var(--ink-dim)">.</span></h2>
+        <h2>Como jogar<span class="pt">.</span></h2>
+        <div class="tag">Selecionado · <b id="modeLabel">Palavra Secreta</b></div>
+      </div>
+      <div id="modesGrid" class="themes modes"></div>
+    </div>
+  </section>
+
+  <section class="section anim-4" id="playersSection">
+    <div class="sec-no">Cap. <span class="num">02</span> — Elenco</div>
+    <div class="sec-body">
+      <div class="sec-head">
+        <h2>Os jogadores<span class="pt">.</span></h2>
         <div class="tag">Total <b id="playerCount">0</b> · Mín. 3 · Máx. 16</div>
       </div>
 
@@ -681,11 +773,11 @@
     </div>
   </section>
 
-  <section class="section anim-5">
-    <div class="sec-no">Cap. <span class="num">02</span> — Universo</div>
+  <section class="section anim-5" id="themesSection">
+    <div class="sec-no">Cap. <span class="num">03</span> — Universo</div>
     <div class="sec-body">
       <div class="sec-head">
-        <h2>Tema da rodada<span class="pt" style="color:var(--ink-dim)">.</span></h2>
+        <h2>Tema da rodada<span class="pt">.</span></h2>
         <div class="tag">Selecionado · <b id="themeLabel">—</b></div>
       </div>
       <div id="themesGrid" class="themes"></div>
@@ -693,7 +785,7 @@
   </section>
 
   <section class="section anim-6">
-    <div class="sec-no">Cap. <span class="num">03</span> — Regras</div>
+    <div class="sec-no">Cap. <span class="num">04</span> — Regras</div>
     <div class="sec-body">
       <div class="sec-head">
         <h2>Configurações<span class="pt" style="color:var(--ink-dim)">.</span></h2>
@@ -815,7 +907,7 @@
     <div class="sec-body">
       <div class="result-card">
         <div class="result-row">
-          <span class="lbl">A palavra secreta era</span>
+          <span class="lbl" id="resultWordLabel">A palavra secreta era</span>
           <span class="val" id="resultWord">—<span class="pt">.</span></span>
         </div>
         <div class="result-row">
@@ -846,6 +938,57 @@
 </main>
 
 <script>
+/* ─────────────────────────────────────────────
+   GAME MODES
+   ───────────────────────────────────────────── */
+const MODES = {
+  palavra: {
+    label: "Palavra Secreta",
+    desc: "Todos veem a mesma palavra. O impostor não sabe qual é.",
+    suit: "◆",
+    idx: "PS"
+  },
+  perguntas: {
+    label: "Perguntas",
+    desc: "Mesma pergunta para todos. O impostor deve fingir que sabe.",
+    suit: "?",
+    idx: "PG"
+  }
+};
+
+const QUESTIONS = [
+  { q: "Qual aplicativo você mais usa no celular?", c: "Apps de mensagem" },
+  { q: "Qual seu prato favorito?", c: "Comida brasileira" },
+  { q: "Onde você passou as últimas férias?", c: "Praia" },
+  { q: "Qual o último filme que assistiu?", c: "Filme de ação" },
+  { q: "Qual sua música favorita do momento?", c: "Sertanejo" },
+  { q: "Qual esporte você mais gosta de assistir?", c: "Futebol" },
+  { q: "Qual sua marca favorita de roupa?", c: "Marca esportiva" },
+  { q: "Qual o último livro que leu?", c: "Romance" },
+  { q: "Qual rede social você usa mais?", c: "Instagram" },
+  { q: "Qual seu personagem favorito de desenho?", c: "Disney" },
+  { q: "Qual sua bebida preferida?", c: "Refrigerante" },
+  { q: "Qual jogo de videogame você mais jogou?", c: "Battle Royale" },
+  { q: "Qual seu meio de transporte favorito?", c: "Carro" },
+  { q: "Qual sua estação do ano favorita?", c: "Verão" },
+  { q: "Qual seu animal de estimação preferido?", c: "Cachorro" },
+  { q: "Qual o último lugar que você visitou?", c: "Shopping" },
+  { q: "Qual seu hobby?", c: "Esporte" },
+  { q: "Qual sua profissão dos sonhos?", c: "Tecnologia" },
+  { q: "Qual seu canal favorito no YouTube?", c: "Gameplay" },
+  { q: "Qual rede de fast food você prefere?", c: "Hambúrguer" },
+  { q: "Qual estilo musical você mais ouve?", c: "Pop" },
+  { q: "Qual cor de carro você prefere?", c: "Preto" },
+  { q: "Qual sua cidade favorita do Brasil?", c: "Rio de Janeiro" },
+  { q: "Qual fruta você mais gosta?", c: "Tropical" },
+  { q: "Qual seu super-herói favorito?", c: "Marvel" },
+  { q: "Qual sua matéria favorita na escola?", c: "Exatas" },
+  { q: "Qual seu jogo de tabuleiro favorito?", c: "Estratégia" },
+  { q: "Qual seu doce favorito?", c: "Chocolate" },
+  { q: "Qual marca de tênis você mais usa?", c: "Esportiva" },
+  { q: "Qual seu youtuber favorito?", c: "Brasileiro" }
+];
+
 /* ─────────────────────────────────────────────
    THEMES & WORDS
    ───────────────────────────────────────────── */
@@ -911,13 +1054,15 @@ const THEMES = {
    STATE
    ───────────────────────────────────────────── */
 const state = {
+  mode: "palavra",        // "palavra" | "perguntas"
   players: [],            // [{id, name}]
   themeKey: null,
   impostorCount: 1,
   hintForImpostor: false,
   // round
   roundNo: 1,
-  word: null,
+  word: null,             // word OR null
+  question: null,         // {q, c} OR null
   impostorIds: [],
   shuffledOrder: [],      // for reveal phase (shuffle so adjacent guesses aren't predictable)
   revealIdx: 0,
@@ -944,7 +1089,11 @@ const emptyNote = $("#emptyNote");
 const playerCountEl = $("#playerCount");
 
 const themesGrid = $("#themesGrid");
+const themesSection = $("#themesSection");
 const themeLabelEl = $("#themeLabel");
+
+const modesGrid = $("#modesGrid");
+const modeLabelEl = $("#modeLabel");
 
 const impostorStepper = $("#impostorStepper");
 const impostorVal = $("#impostorVal");
@@ -985,10 +1134,55 @@ const newGameBtn = $("#newGameBtn");
    INIT
    ───────────────────────────────────────────── */
 function init(){
+  renderModes();
   renderThemes();
   renderHintToggle();
   bind();
+  applyMode();
   syncCTA();
+}
+
+/* ─────────────────────────────────────────────
+   MODES UI
+   ───────────────────────────────────────────── */
+function renderModes(){
+  modesGrid.innerHTML = "";
+  Object.keys(MODES).forEach((key, i) => {
+    const m = MODES[key];
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "theme mode-card";
+    btn.dataset.key = key;
+    btn.innerHTML = `
+      <span class="tno">M°${String(i+1).padStart(2,"0")}</span>
+      <span class="tname">${m.label}</span>
+      <span class="tcount">${m.desc}</span>
+    `;
+    btn.addEventListener("click", () => selectMode(key));
+    modesGrid.appendChild(btn);
+  });
+  highlightMode();
+}
+function highlightMode(){
+  modesGrid.querySelectorAll(".mode-card").forEach(el => {
+    el.classList.toggle("active", el.dataset.key === state.mode);
+  });
+  modeLabelEl.textContent = MODES[state.mode].label;
+}
+function selectMode(key){
+  if(!MODES[key]) return;
+  state.mode = key;
+  highlightMode();
+  applyMode();
+  syncCTA();
+}
+function applyMode(){
+  // toggle themes section visibility
+  if(state.mode === "perguntas"){
+    themesSection.classList.add("hide");
+  } else {
+    themesSection.classList.remove("hide");
+  }
 }
 
 /* ─────────────────────────────────────────────
@@ -1086,20 +1280,28 @@ function renderHintToggle(){
    CTA SYNC
    ───────────────────────────────────────────── */
 function syncCTA(){
-  const ok = state.players.length >= 3 && !!state.themeKey;
+  const needsTheme = state.mode === "palavra";
+  const ok = state.players.length >= 3 && (!needsTheme || !!state.themeKey);
   startBtn.disabled = !ok;
   syncImpostor();
-  const themeName = state.themeKey ? THEMES[state.themeKey].label : "Sem tema";
-  footHint.textContent = `${state.players.length} jogador${state.players.length===1?"":"es"} · ${themeName} · ${state.impostorCount} impostor${state.impostorCount===1?"":"es"}`;
+  const modeName = MODES[state.mode].label;
+  const themeName = needsTheme ? (state.themeKey ? THEMES[state.themeKey].label : "Sem tema") : "—";
+  footHint.textContent = `${state.players.length} jogador${state.players.length===1?"":"es"} · ${modeName}${needsTheme?` · ${themeName}`:""} · ${state.impostorCount} impostor${state.impostorCount===1?"":"es"}`;
 }
 
 /* ─────────────────────────────────────────────
    ROUND START — shuffles + assigns
    ───────────────────────────────────────────── */
 function startRound(){
-  if(state.players.length < 3 || !state.themeKey) return;
-  const theme = THEMES[state.themeKey];
-  state.word = pickRandom(theme.words);
+  if(state.players.length < 3) return;
+  if(state.mode === "palavra"){
+    if(!state.themeKey) return;
+    state.word = pickRandom(THEMES[state.themeKey].words);
+    state.question = null;
+  } else {
+    state.question = pickRandom(QUESTIONS);
+    state.word = null;
+  }
   state.impostorIds = pickN(state.players.map(p=>p.id), state.impostorCount);
   state.shuffledOrder = shuffle([...state.players]);
   state.revealIdx = 0;
@@ -1152,28 +1354,68 @@ function setRevealFront(name){
 function doReveal(){
   const player = state.shuffledOrder[state.revealIdx];
   const isImpostor = state.impostorIds.includes(player.id);
-  const themeName = THEMES[state.themeKey].label;
   const counter = revealCounter.textContent;
+  const isQuestionMode = state.mode === "perguntas";
+  const themeName = isQuestionMode ? "Perguntas" : THEMES[state.themeKey].label;
 
   if(isImpostor){
-    revealCard.className = "reveal-card back-impostor";
-    const hintLine = state.hintForImpostor
-      ? `Tema: <b>${themeName}</b>. Tente se misturar.`
-      : `Disfarce. Você não sabe a palavra. Tente descobrir.`;
+    const eyebrow = "Você é";
+    const title = `Impostor<span class="pt">.</span>`;
+    let sub;
+    if(isQuestionMode){
+      sub = `Você não sabe a pergunta dos outros. Responda algo <b>vago</b> e tente se misturar.`;
+    } else if(state.hintForImpostor){
+      sub = `Tema: <b>${escapeHTML(themeName)}</b>. Tente se misturar — sem saber a palavra exata.`;
+    } else {
+      sub = `Disfarce. Você não sabe a palavra. Tente descobrir.`;
+    }
+    revealCard.className = "reveal-card playing back-impostor";
     revealCard.innerHTML = `
-      <span class="label">${escapeHTML(player.name)} · ${counter}</span>
-      <span class="theme-tag">${state.hintForImpostor ? themeName : "—"}</span>
-      <span class="word">Impostor<span class="pt">.</span></span>
-      <span class="hint">${hintLine}</span>
+      <span class="ornament"></span>
+      <span class="center-mark"></span>
+      <div class="card-meta-top">
+        <span class="who">${escapeHTML(player.name)} · ${counter}</span>
+        <span class="tag">${escapeHTML(themeName)}</span>
+      </div>
+      <div class="corner-mark tl"><span class="suit">✕</span><span class="idx">IM</span></div>
+      <div class="corner-mark br"><span class="suit">✕</span><span class="idx">IM</span></div>
+      <div class="card-center">
+        <span class="card-eyebrow">${eyebrow}</span>
+        <span class="card-title">${title}</span>
+        <span class="card-sub">${sub}</span>
+      </div>
       <button type="button" class="dismiss" id="hideCardBtn">Esconder e passar →</button>
     `;
   } else {
-    revealCard.className = "reveal-card back-word";
+    let eyebrow, title, sub, suit, idx;
+    if(isQuestionMode){
+      const qObj = state.question;
+      eyebrow = "Sua pergunta";
+      title = `${escapeHTML(qObj.q)}`;
+      sub = `Responda baseado em: <b>${escapeHTML(qObj.c)}</b>. Sem entregar de cara.`;
+      suit = "?"; idx = "PG";
+      var titleClass = "card-title long";
+    } else {
+      eyebrow = "Palavra secreta";
+      title = `${escapeHTML(state.word)}<span class="pt">.</span>`;
+      sub = `Dê uma dica relacionada — sem entregar a palavra.`;
+      suit = "◆"; idx = "PS";
+      var titleClass = "card-title";
+    }
+    revealCard.className = "reveal-card playing back-word";
     revealCard.innerHTML = `
-      <span class="label">${escapeHTML(player.name)} · ${counter}</span>
-      <span class="theme-tag">${themeName}</span>
-      <span class="word">${escapeHTML(state.word)}<span class="pt">.</span></span>
-      <span class="hint">Dê uma dica relacionada — sem entregar a palavra.</span>
+      <span class="ornament"></span>
+      <div class="card-meta-top">
+        <span class="who">${escapeHTML(player.name)} · ${counter}</span>
+        <span class="tag">${escapeHTML(themeName)}</span>
+      </div>
+      <div class="corner-mark tl"><span class="suit">${suit}</span><span class="idx">${idx}</span></div>
+      <div class="corner-mark br"><span class="suit">${suit}</span><span class="idx">${idx}</span></div>
+      <div class="card-center">
+        <span class="card-eyebrow">${eyebrow}</span>
+        <span class="${titleClass}">${title}</span>
+        <span class="card-sub">${sub}</span>
+      </div>
       <button type="button" class="dismiss" id="hideCardBtn">Esconder e passar →</button>
     `;
   }
@@ -1200,7 +1442,11 @@ function enterGame(){
   state.turnIdx = 0;
   showScreen("game");
   roundLabel.textContent = `Rodada ${String(state.roundNo).padStart(2,"0")}`;
-  gameThemeEl.textContent = `Tema · ${THEMES[state.themeKey].label}`;
+  if(state.mode === "perguntas"){
+    gameThemeEl.textContent = `Modo · Perguntas`;
+  } else {
+    gameThemeEl.textContent = `Tema · ${THEMES[state.themeKey].label}`;
+  }
   renderTurn();
 }
 function renderTurn(){
@@ -1222,8 +1468,17 @@ function nextTurn(){
 function endRound(){
   showScreen("result");
   resultRound.textContent = String(state.roundNo).padStart(2,"0");
-  resultTheme.textContent = `Tema · ${THEMES[state.themeKey].label}`;
-  resultWord.innerHTML = `${escapeHTML(state.word)}<span class="pt">.</span>`;
+  if(state.mode === "perguntas"){
+    resultTheme.textContent = `Modo · Perguntas`;
+    document.getElementById("resultWordLabel").textContent = "A pergunta era";
+    resultWord.innerHTML = `${escapeHTML(state.question.q)} <span class="sep">·</span> <span style="color:var(--accent)">${escapeHTML(state.question.c)}</span>`;
+    resultWord.classList.add("long");
+  } else {
+    resultTheme.textContent = `Tema · ${THEMES[state.themeKey].label}`;
+    document.getElementById("resultWordLabel").textContent = "A palavra secreta era";
+    resultWord.innerHTML = `${escapeHTML(state.word)}<span class="pt">.</span>`;
+    resultWord.classList.remove("long");
+  }
   const impostors = state.players.filter(p => state.impostorIds.includes(p.id));
   resultImpostorLabel.textContent = impostors.length > 1 ? `Os impostores eram` : `O impostor era`;
   resultImpostors.innerHTML = impostors.map(p => escapeHTML(p.name)).join('<span class="sep"> & </span>') + '<span class="pt">.</span>';
