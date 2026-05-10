@@ -26,8 +26,8 @@ export const THEMES = {
   },
   comida: {
     label: "Comida",
-    desc: "Pratos do mundo",
-    words: ["Pizza","Sushi","Hambúrguer","Feijoada","Lasanha","Brigadeiro","Coxinha","Pão de Queijo","Açaí","Pastel","Tacos","Pad Thai","Risoto","Churrasco","Sorvete","Tapioca","Croissant","Ceviche","Ramen","Curry","Picanha","Moqueca","Acarajé","Vatapá","Estrogonofe","Quibe","Esfiha","Pamonha","Cachorro-Quente","Macarrão","Salada Caesar","Crepe","Hot Roll","Yakisoba","Tempura","Paella","Gazpacho","Falafel","Hummus","Shawarma"]
+    desc: "Pratos do mundo & do Brasil",
+    words: ["Pizza","Sushi","Hambúrguer","Feijoada","Lasanha","Brigadeiro","Coxinha","Pão de Queijo","Açaí","Pastel","Tacos","Pad Thai","Risoto","Churrasco","Sorvete","Tapioca","Croissant","Ceviche","Ramen","Curry","Picanha","Moqueca","Acarajé","Vatapá","Estrogonofe","Quibe","Esfiha","Pamonha","Cachorro-Quente","Macarrão","Salada Caesar","Crepe","Hot Roll","Yakisoba","Tempura","Paella","Gazpacho","Falafel","Hummus","Shawarma","Bolo de Rolo","Bolo de Fubá","Pudim","Quindim","Beijinho","Cocada","Paçoca","Pé de Moleque","Mousse de Maracujá","Maria Mole","Curau","Manjar Branco","Pavê","Rocambole","Sonho","Romeu e Julieta","Cuscuz Paulista","Cuscuz Nordestino","Baião de Dois","Carne de Sol","Bobó de Camarão","Caruru","Canjica","Mungunzá","Galinhada","Tutu de Feijão","Virado à Paulista","Arroz Carreteiro","Empada","Risoles","Bolinho de Bacalhau","Bolinho de Chuva","Pão na Chapa","Bauru","Misto Quente","X-Tudo","Espetinho","Farofa","Vinagrete","Polenta Frita","Mandioca Frita","Caldo de Cana","Caldo Verde","Strogonoff de Frango","Frango à Passarinho","Camarão na Moranga","Joelho","Empadão de Frango","Costelinha de Porco","Asa de Frango","Vaca Atolada","Feijão Tropeiro","Caipirinha","Guaraná","Pão com Mortadela","Pizza de Calabresa","Lanche de Mortadela","Açaí na Tigela","Mate Gelado"]
   },
   animais: {
     label: "Animais",
@@ -58,5 +58,10 @@ export const THEMES = {
     label: "Naruto",
     desc: "Vila da Folha & além",
     words: ["Naruto Uzumaki","Sasuke Uchiha","Sakura Haruno","Kakashi Hatake","Itachi Uchiha","Madara Uchiha","Pain","Hinata Hyuga","Shikamaru Nara","Rock Lee","Gaara","Jiraiya","Tsunade","Orochimaru","Minato Namikaze","Obito Uchiha","Konan","Deidara","Sasori","Kisame","Hidan","Kakuzu","Konohamaru","Neji Hyuga","Tenten","Choji Akimichi","Ino Yamanaka","Kiba Inuzuka","Shino Aburame","Kurama","Hashirama","Tobirama","Kabuto","Zabuza","Haku","Rasengan","Chidori","Sharingan","Byakugan","Rinnegan","Hokage","Akatsuki","Konoha","Suna","Edo Tensei","Susanoo","Amaterasu","Tsukuyomi","Bijuu","Ninjutsu","Genjutsu"]
+  },
+  disney: {
+    label: "Disney",
+    desc: "Personagens & filmes",
+    words: ["Mickey Mouse","Minnie Mouse","Pato Donald","Pateta","Pluto","Elsa","Anna","Olaf","Simba","Mufasa","Scar","Timon","Pumba","Ariel","Úrsula","Sebastião","Bela","Fera","Lumière","Branca de Neve","Cinderela","Aurora","Rapunzel","Mulan","Moana","Maui","Tiana","Pinóquio","Peter Pan","Sininho","Capitão Gancho","Aladdin","Jasmine","Gênio","Jafar","Tarzan","Hércules","Mérida","Stitch","Lilo","Mogli","Baloo","Pocahontas","Quasímodo","Esmeralda","Bambi","Dumbo","Buzz Lightyear","Woody","Jessie","Wall-E","Eva","Sulley","Mike Wazowski","Boo","Nemo","Dory","Marlin","Remy","Linguini","Carl Fredricksen","Russell","Mirabel","Bruno Madrigal","Joy","Tristeza","Cruella de Vil","Maleficent","Hades","Anastasia","Drizela","Madrasta Cinderela","O Rei Leão","Frozen","A Pequena Sereia","A Bela e a Fera","Toy Story","Up","Procurando Nemo","Procurando Dory","Ratatouille","Os Incríveis","Carros","Monstros S.A.","Universidade Monstros","Divertida Mente","Soul","Encanto","Luca","Coco","Onward","Zootopia","Detona Ralph","Big Hero 6","Enrolados","Valente","101 Dálmatas","Aristogatas","O Corcunda de Notre Dame","Lilo & Stitch","Mogli — O Menino Lobo","Tarzan","Hércules","Mulan","Aladdin","Pocahontas","A Princesa e o Sapo","Branca de Neve e os Sete Anões","A Bela Adormecida","Pinóquio","Bambi","Dumbo","Peter Pan","Fantasia","Wreck-It Ralph"]
   }
 };
