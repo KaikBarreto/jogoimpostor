@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#0b0b0a"/>
+  <defs>
+    <pattern id="hatch" patternUnits="userSpaceOnUse" width="22" height="22" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="22" stroke="#ffffff" stroke-opacity="0.04" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="512" height="512" fill="url(#hatch)"/>
+  <!-- inner editorial frame -->
+  <rect x="40" y="40" width="432" height="432" fill="none" stroke="#f3efe6" stroke-opacity="0.18" stroke-width="1.5"/>
+  <!-- italic "I" with serifs (Fraunces-inspired) -->
+  <g fill="#f3efe6">
+    <!-- top serif -->
+    <path d="M 200 132 L 286 132 L 282 152 L 252 152 L 232 384 L 262 384 L 258 404 L 172 404 L 176 384 L 206 384 L 226 152 L 196 152 Z"/>
+  </g>
+  <!-- red period accent -->
+  <circle cx="306" cy="394" r="28" fill="#e63946"/>
+  <!-- corner indices "IM" mono -->
+  <text x="64" y="92" font-family="ui-monospace, Menlo, monospace" font-size="26" font-weight="700" letter-spacing="3" fill="#e63946">IM</text>
+  <g transform="translate(448 420) rotate(180)">
+    <text x="0" y="0" font-family="ui-monospace, Menlo, monospace" font-size="26" font-weight="700" letter-spacing="3" fill="#e63946">IM</text>
+  </g>
+</svg>

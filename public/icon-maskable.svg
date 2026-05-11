@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#0b0b0a"/>
+  <!-- italic "I" centered for maskable safe zone -->
+  <g fill="#f3efe6">
+    <path d="M 215 175 L 305 175 L 301 195 L 268 195 L 248 340 L 278 340 L 274 360 L 187 360 L 191 340 L 222 340 L 242 195 L 211 195 Z"/>
+  </g>
+  <circle cx="320" cy="350" r="26" fill="#e63946"/>
+</svg>
