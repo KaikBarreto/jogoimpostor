@@ -8,10 +8,50 @@
     --accent: #e63946;
     --accent-deep: #b32a35;
     --warn: #e63946;
+    /* RGB tokens for translucent overlays that swap with the theme */
+    --paper-rgb: 11, 11, 10;
+    --ink-rgb: 243, 239, 230;
+    --shadow-rgb: 0, 0, 0;
+    --highlight-rgb: 255, 255, 255;
+    /* Card-specific tokens (light theme overrides them) */
+    --card-bg: linear-gradient(160deg, #15140f 0%, #0b0b0a 100%);
+    --card-front-bg: linear-gradient(160deg, #14130f 0%, #0b0b0a 100%);
+    --card-radial-1: radial-gradient(70% 50% at 30% 25%, rgba(255,255,255,.05), transparent 60%);
+    --card-radial-2: radial-gradient(60% 40% at 80% 90%, rgba(230,57,70,.06), transparent 70%);
+    --card-front-radial-1: radial-gradient(70% 50% at 30% 25%, rgba(255,255,255,.03), transparent 60%);
+    --card-front-radial-2: radial-gradient(60% 40% at 80% 90%, rgba(230,57,70,.05), transparent 70%);
+    --hatch-color: rgba(243,239,230,.025);
+    --hatch-color-front: rgba(243,239,230,.02);
     --serif: "Fraunces", "Times New Roman", serif;
     --mono: "JetBrains Mono", ui-monospace, monospace;
     --max: 1140px;
   }
+  /* —————— LIGHT THEME —————— */
+  :root[data-theme="light"]{
+    --ink: #1a1614;
+    --ink-dim: #6a6660;
+    --ink-faint: #b6b0a3;
+    --paper: #f5f0e6;
+    --paper-2: #ece6d8;
+    --rule: #cfc8b8;
+    --accent: #c41525;
+    --accent-deep: #8a0e1c;
+    --warn: #c41525;
+    --paper-rgb: 245, 240, 230;
+    --ink-rgb: 26, 22, 20;
+    --shadow-rgb: 26, 22, 20;
+    --highlight-rgb: 255, 250, 240;
+    --card-bg: linear-gradient(160deg, #f5f0e6 0%, #ece6d8 100%);
+    --card-front-bg: linear-gradient(160deg, #f8f3ea 0%, #ede8da 100%);
+    --card-radial-1: radial-gradient(70% 50% at 30% 25%, rgba(0,0,0,.04), transparent 60%);
+    --card-radial-2: radial-gradient(60% 40% at 80% 90%, rgba(196,21,37,.07), transparent 70%);
+    --card-front-radial-1: radial-gradient(70% 50% at 30% 25%, rgba(0,0,0,.03), transparent 60%);
+    --card-front-radial-2: radial-gradient(60% 40% at 80% 90%, rgba(196,21,37,.06), transparent 70%);
+    --hatch-color: rgba(26,22,20,.05);
+    --hatch-color-front: rgba(26,22,20,.04);
+  }
+  html{transition:background-color .35s ease, color .35s ease}
+  body{transition:background-color .35s ease, color .35s ease}
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   html,body{background:var(--paper);color:var(--ink);min-height:100%}
   body{
@@ -38,8 +78,12 @@
     content:"";
     position:fixed;inset:0;
     pointer-events:none;z-index:1;
-    background:radial-gradient(130% 90% at 50% 0%, transparent 55%, rgba(0,0,0,.32) 100%);
+    background:radial-gradient(130% 90% at 50% 0%, transparent 55%, rgba(var(--shadow-rgb),.32) 100%);
   }
+  :root[data-theme="light"] body::after{
+    background:radial-gradient(130% 90% at 50% 0%, transparent 55%, rgba(var(--shadow-rgb),.10) 100%);
+  }
+  :root[data-theme="light"] body::before{opacity:.04;mix-blend-mode:multiply}
 
   a{color:inherit;text-decoration:none}
   button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
@@ -140,6 +184,23 @@
     0%   {background-position:120% 50%}
     50%  {background-position:-30% 50%}
     100% {background-position:-200% 50%}
+  }
+  :root[data-theme="light"] .hero h1.shimmer .typed{
+    background:linear-gradient(
+      100deg,
+      #1a1614 0%,
+      #1a1614 30%,
+      #5a534a 47%,
+      #2a2520 52%,
+      #5a534a 57%,
+      #1a1614 70%,
+      #1a1614 100%
+    );
+    background-size:280% 100%;
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    color:transparent;
   }
   @media(prefers-reduced-motion:reduce){
     .hero h1 .caret{animation:none;opacity:.4}
@@ -459,24 +520,24 @@
   }
   .reveal-card.front{
     background:
-      radial-gradient(70% 50% at 30% 25%, rgba(255,255,255,.03), transparent 60%),
-      radial-gradient(60% 40% at 80% 90%, rgba(230,57,70,.05), transparent 70%),
-      linear-gradient(160deg, #14130f 0%, #0b0b0a 100%);
+      var(--card-front-radial-1),
+      var(--card-front-radial-2),
+      var(--card-front-bg);
   }
   .reveal-card.front::before{
     content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.7 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
     opacity:.09;mix-blend-mode:overlay;
   }
+  :root[data-theme="light"] .reveal-card.front::before{opacity:.05;mix-blend-mode:multiply}
   .reveal-card.front::after{
     content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
-    background:repeating-linear-gradient(45deg, transparent 0 30px, rgba(243,239,230,.02) 30px 31px);
+    background:repeating-linear-gradient(45deg, transparent 0 30px, var(--hatch-color-front) 30px 31px);
   }
   .reveal-card.front > *{position:relative;z-index:1}
-  .reveal-card.front:hover{background:
-      radial-gradient(70% 50% at 30% 25%, rgba(255,255,255,.05), transparent 60%),
-      radial-gradient(60% 40% at 80% 90%, rgba(230,57,70,.07), transparent 70%),
-      linear-gradient(160deg, #1a1813 0%, #0f0e0d 100%)}
+  .reveal-card.front:hover{
+    filter:brightness(1.04);
+  }
   .reveal-card.front .who{
     font-family:var(--mono);font-size:clamp(10px,1.2vw,11px);letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);
     position:absolute;top:clamp(14px,3vw,24px);left:clamp(14px,3vw,24px);
@@ -630,16 +691,16 @@
   /* —————— back: WORD card (paper) —————— */
   .reveal-card.back-word{
     background:
-      radial-gradient(70% 50% at 30% 25%, rgba(255,255,255,.05), transparent 60%),
-      radial-gradient(60% 40% at 80% 90%, rgba(230,57,70,.06), transparent 70%),
-      linear-gradient(160deg, #15140f 0%, #0b0b0a 100%);
+      var(--card-radial-1),
+      var(--card-radial-2),
+      var(--card-bg);
     color:var(--ink);
   }
   /* geometric ornament on word card */
   .reveal-card.back-word .ornament{
     position:absolute;inset:0;pointer-events:none;z-index:2;
     background:
-      repeating-linear-gradient(45deg, transparent 0 28px, rgba(243,239,230,.025) 28px 29px);
+      repeating-linear-gradient(45deg, transparent 0 28px, var(--hatch-color) 28px 29px);
   }
   .reveal-card.back-word .card-title{
     font-size:clamp(44px, 13vw, 128px);
@@ -649,7 +710,7 @@
     max-width:22ch;
   }
   .reveal-card.back-word .card-title .pt{color:var(--accent)}
-  .reveal-card.back-word .dismiss{border-color:rgba(243,239,230,.35)}
+  .reveal-card.back-word .dismiss{border-color:rgba(var(--ink-rgb),.35)}
   .reveal-card.back-word .dismiss:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
   .reveal-card.back-word .corner-mark{color:var(--ink-dim)}
 
@@ -942,8 +1003,25 @@
     color:var(--ink-dim);
     background:linear-gradient(180deg, transparent 0%, rgba(11,11,10,.7) 35%, var(--paper) 75%);
   }
+  .colophon-fixed{
+    display:flex;justify-content:center;align-items:center;
+    gap:10px;flex-wrap:wrap;
+    background:linear-gradient(180deg, transparent 0%, rgba(var(--paper-rgb),.7) 35%, var(--paper) 75%);
+  }
   .colophon-fixed > *{pointer-events:auto}
   .colophon-fixed .credit-link{display:inline-block}
+  .colophon-sep{color:var(--ink-faint)}
+  .theme-toggle{
+    background:none;border:0;
+    color:var(--ink-dim);
+    font:inherit;letter-spacing:inherit;text-transform:inherit;
+    cursor:pointer;padding:0;
+    transition:color .2s;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .theme-toggle b{color:var(--ink);font-weight:500;letter-spacing:.04em;transition:color .2s}
+  .theme-toggle:hover{color:var(--accent)}
+  .theme-toggle:hover b{color:var(--accent)}
 
   /* leave space at the bottom of every screen so the fixed colophon never covers content */
   .frame, .reveal-wrap, .game-wrap{

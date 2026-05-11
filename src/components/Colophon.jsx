@@ -1,4 +1,8 @@
+import { useTheme } from "../hooks/useTheme.js";
+
 export default function Colophon() {
+  const { theme, toggle } = useTheme();
+  const next = theme === "dark" ? "CLARO" : "ESCURO";
   return (
     <footer className="colophon-fixed">
       <span>
@@ -12,6 +16,17 @@ export default function Colophon() {
           <b>Kaik Barreto</b>
         </a>
       </span>
+      <span className="colophon-sep" aria-hidden="true">
+        ·
+      </span>
+      <button
+        type="button"
+        className="theme-toggle"
+        onClick={toggle}
+        aria-label={`Mudar para tema ${next}`}
+      >
+        Tema <b>{next}</b>
+      </button>
     </footer>
   );
 }

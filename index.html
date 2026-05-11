@@ -6,7 +6,19 @@
 <title>O Impostor — um jogo social</title>
 <meta name="description" content="Um jogo social local — passe o celular, descubra sua palavra, encontre o impostor." />
 <meta name="theme-color" content="#0b0b0a" />
-<meta name="color-scheme" content="dark" />
+<meta name="color-scheme" content="dark light" />
+<script>
+  // Apply saved theme before paint to avoid FOUC.
+  (function () {
+    try {
+      var saved = localStorage.getItem("theme");
+      if (saved !== "light" && saved !== "dark") saved = "dark";
+      document.documentElement.setAttribute("data-theme", saved);
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute("content", saved === "light" ? "#f5f0e6" : "#0b0b0a");
+    } catch (_) {}
+  })();
+</script>
 
 <!-- PWA -->
 <link rel="icon" type="image/svg+xml" href="/icon.svg" />
