@@ -752,6 +752,47 @@
     content:"";position:absolute;inset:14px;border:1px solid rgba(255,235,225,.06);
   }
 
+  /* — IMPOSTOR card · LIGHT THEME: cream-blush with red as the dominant ink — */
+  :root[data-theme="light"] .reveal-card.back-impostor{
+    background:
+      radial-gradient(70% 55% at 25% 18%, rgba(255,255,255,.55), transparent 60%),
+      radial-gradient(55% 45% at 82% 92%, rgba(196,21,37,.32), transparent 72%),
+      linear-gradient(160deg, #fff0f1 0%, #fbd8db 28%, #f5bbc0 55%, #ee9ba2 78%, #e07882 100%);
+    color:#2a0810;
+    border-color:var(--accent-deep);
+  }
+  :root[data-theme="light"] .reveal-card.back-impostor::after{
+    background:radial-gradient(120% 80% at 50% 0%, transparent 60%, rgba(138,14,28,.18) 100%);
+  }
+  :root[data-theme="light"] .reveal-card.back-impostor .ornament{
+    background:
+      repeating-linear-gradient(45deg, transparent 0 22px, rgba(138,14,28,.07) 22px 23px),
+      repeating-linear-gradient(-45deg, transparent 0 80px, rgba(0,0,0,.04) 80px 81px);
+  }
+  :root[data-theme="light"] .reveal-card.back-impostor .card-title{
+    color:var(--accent);
+    text-shadow:0 1px 0 rgba(138,14,28,.18), 0 0 38px rgba(196,21,37,.25);
+  }
+  :root[data-theme="light"] .reveal-card.back-impostor .card-title .pt{color:var(--accent-deep)}
+  :root[data-theme="light"] .reveal-card.back-impostor .card-sub b{color:var(--accent-deep);font-weight:500}
+  :root[data-theme="light"] .reveal-card.back-impostor .corner-mark{color:var(--accent-deep)}
+  :root[data-theme="light"] .reveal-card.back-impostor .corner-mark .suit{
+    color:var(--accent);text-shadow:0 0 10px rgba(196,21,37,.35);
+  }
+  :root[data-theme="light"] .reveal-card.back-impostor .dismiss{
+    color:var(--accent-deep);
+    border-color:rgba(138,14,28,.55);
+  }
+  :root[data-theme="light"] .reveal-card.back-impostor .dismiss:hover{
+    background:var(--accent);color:#fff5f3;border-color:var(--accent);
+  }
+  :root[data-theme="light"] .reveal-card.back-impostor .center-mark{
+    border-color:rgba(138,14,28,.14);
+  }
+  :root[data-theme="light"] .reveal-card.back-impostor .center-mark::before{
+    border-color:rgba(138,14,28,.10);
+  }
+
   .reveal-bottom{
     text-align:center;
     padding-top:14px;
