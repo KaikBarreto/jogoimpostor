@@ -3,7 +3,7 @@ import { useGame } from "../state/GameStore.jsx";
 import { THEMES } from "../data/themes.js";
 
 export default function ResultScreen() {
-  const { state, playAgain, restart } = useGame();
+  const { state, playAgain, goToSetup } = useGame();
   const roundStr = String(state.roundNo).padStart(2, "0");
 
   // Right header label in hero
@@ -46,13 +46,13 @@ export default function ResultScreen() {
   const impostorLabel =
     impostors.length > 1 ? "Os impostores eram" : "O impostor era";
 
-  const handlePlayAgain = (e) => {
+  const handleReiniciar = (e) => {
     e.stopPropagation();
     playAgain();
   };
-  const handleRestart = (e) => {
+  const handleVoltar = (e) => {
     e.stopPropagation();
-    restart();
+    goToSetup();
   };
 
   return (
@@ -140,6 +140,12 @@ export default function ResultScreen() {
       </section>
 
       <section className="cta-row dual">
+        <button type="button" className="cta" onClick={handleReiniciar}>
+          <span className="lbl">
+            Reiniciar<span className="pt">.</span>
+          </span>
+          <span className="arr">NOVA RODADA ↻</span>
+        </button>
         <button
           type="button"
           className="cta"
@@ -149,18 +155,12 @@ export default function ResultScreen() {
             outline: "1px solid var(--ink)",
             outlineOffset: "-1px",
           }}
-          onClick={handlePlayAgain}
+          onClick={handleVoltar}
         >
           <span className="lbl">
-            Nova rodada<span className="pt">.</span>
+            Voltar ao início<span className="pt">.</span>
           </span>
-          <span className="arr">REEMBARALHAR ↻</span>
-        </button>
-        <button type="button" className="cta" onClick={handleRestart}>
-          <span className="lbl">
-            Recomeçar<span className="pt">.</span>
-          </span>
-          <span className="arr">JOGAR DE NOVO →</span>
+          <span className="arr">← ELENCO</span>
         </button>
       </section>
     </main>
