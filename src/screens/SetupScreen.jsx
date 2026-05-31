@@ -3,8 +3,7 @@ import { useGame } from "../state/GameStore.jsx";
 import Mast from "../components/Mast.jsx";
 import Hero from "../components/Hero.jsx";
 import ModeGrid from "../components/ModeGrid.jsx";
-import PlayersInput from "../components/PlayersInput.jsx";
-import PlayersList from "../components/PlayersList.jsx";
+import PlayerRoster from "../components/PlayerRoster.jsx";
 import ThemeGrid from "../components/ThemeGrid.jsx";
 import Stepper from "../components/Stepper.jsx";
 import HintToggle from "../components/HintToggle.jsx";
@@ -14,7 +13,7 @@ import { MODES } from "../data/modes.js";
 import { THEMES } from "../data/themes.js";
 
 export default function SetupScreen() {
-  const { state, setImpostorCount } = useGame();
+  const { state, setImpostorCount, addPlayer, removePlayer } = useGame();
   const rootRef = useRef(null);
 
   // Scroll reveal — observe .scroll-reveal nodes inside this screen.
@@ -117,8 +116,12 @@ export default function SetupScreen() {
             </div>
           </div>
 
-          <PlayersInput />
-          <PlayersList />
+          <PlayerRoster
+            players={state.players}
+            onAdd={addPlayer}
+            onRemove={removePlayer}
+            max={16}
+          />
         </div>
       </section>
 
