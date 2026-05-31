@@ -1,0 +1,137 @@
+.amigos-root {
+  --amg-bg: #07090a;
+  --amg-bg-2: #0d1110;
+  --amg-ink: #eafce0;
+  --amg-dim: #7e8a78;
+  --amg-rule: #1c241d;
+  --amg-accent: #b6ff3a;
+  --amg-accent-deep: #7bbf16;
+  min-height: 100vh;
+  background: var(--amg-bg);
+  color: var(--amg-ink);
+}
+
+/* Override page tokens locally so reused .mast/.hero/.section look at home here */
+.amigos-root .amigos-screen {
+  --ink: var(--amg-ink);
+  --ink-dim: var(--amg-dim);
+  --rule: var(--amg-rule);
+  --paper: var(--amg-bg);
+  --paper-2: var(--amg-bg-2);
+  --accent: var(--amg-accent);
+}
+
+.amg-pt { color: var(--amg-accent); }
+
+/* The cursed card */
+.amg-card {
+  width: min(var(--max), 92%);
+  margin: 18px auto;
+  padding: 36px 26px;
+  border: 1px solid var(--amg-accent-deep);
+  border-radius: 16px;
+  background:
+    radial-gradient(80% 60% at 50% 0%, rgba(182, 255, 58, 0.08), transparent 70%),
+    var(--amg-bg-2);
+  box-shadow: 0 0 0 1px rgba(182, 255, 58, 0.08), 0 18px 50px rgba(0, 0, 0, 0.6);
+  text-align: center;
+}
+.amg-card-tag {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--amg-accent);
+}
+.amg-question {
+  margin-top: 14px;
+  font-family: var(--serif);
+  font-size: clamp(26px, 6vw, 46px);
+  line-height: 1.1;
+}
+
+/* Player buttons */
+.amg-players {
+  width: min(var(--max), 92%);
+  margin: 10px auto 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (min-width: 720px) {
+  .amg-players { grid-template-columns: 1fr 1fr 1fr; }
+}
+.amg-pbtn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 18px 16px;
+  border: 1px solid var(--amg-rule);
+  border-radius: 12px;
+  background: var(--amg-bg-2);
+  color: var(--amg-ink);
+  font-family: var(--mono);
+  transition: transform 0.1s ease, border-color 0.1s ease, background 0.1s ease;
+}
+.amg-pbtn:hover { border-color: var(--amg-accent); }
+.amg-pbtn:active {
+  transform: scale(0.97);
+  background: var(--amg-accent);
+  color: #06170a;
+}
+.amg-pname { font-size: 16px; font-weight: 600; }
+.amg-pcount { font-size: 12px; color: var(--amg-dim); }
+
+/* CTAs */
+.amg-cta { background: var(--amg-accent); color: #06170a; }
+.amg-cta-finish {
+  background: transparent;
+  color: var(--amg-ink);
+  outline: 1px solid var(--amg-rule);
+  outline-offset: -1px;
+}
+.amg-cta-ghost {
+  background: transparent;
+  color: var(--amg-ink);
+  outline: 1px solid var(--amg-accent);
+  outline-offset: -1px;
+}
+
+/* Ranking */
+.amg-rank {
+  width: min(var(--max), 92%);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.amg-rank-item {
+  border: 1px solid var(--amg-rule);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--amg-bg-2);
+}
+.amg-rank-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  color: var(--amg-ink);
+  font-family: var(--mono);
+}
+.amg-rank-pos { color: var(--amg-dim); font-size: 13px; }
+.amg-rank-name { flex: 1; text-align: left; font-size: 17px; font-weight: 600; }
+.amg-rank-count { color: var(--amg-accent); font-weight: 600; }
+.amg-rank-cards {
+  list-style: none;
+  padding: 4px 18px 16px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--amg-dim);
+  font-size: 13px;
+}
+.amg-rank-cards li { border-left: 2px solid var(--amg-rule); padding-left: 10px; }
+.amg-rank-empty { font-style: italic; }

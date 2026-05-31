@@ -1,7 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.jsx";
-import { GameProvider } from "./state/GameStore.jsx";
+import AppShell from "./shell/AppShell.jsx";
 import "./index.css";
 
 // Register the service worker for PWA / offline support.
@@ -15,8 +14,6 @@ if ("serviceWorker" in navigator) {
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <GameProvider>
-      <App />
-    </GameProvider>
+    <AppShell />
   </React.StrictMode>
 );
