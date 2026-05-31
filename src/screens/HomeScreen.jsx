@@ -1,46 +1,61 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTheme } from "../hooks/useTheme.js";
-import NavBar from "../components/ios/NavBar.jsx";
+import Colophon from "../components/Colophon.jsx";
 import "./home.css";
 
 const GAMES = [
   {
     key: "impostor",
     to: "/impostor",
+    no: "N°01",
     name: "O Impostor",
-    tagline: "Descubra quem está blefando",
     cover: "/cover-impostor.jpg",
     cls: "hub-card--impostor",
+    cta: "JOGAR →",
   },
   {
     key: "amigos",
     to: "/amigos",
+    no: "N°02",
     name: "Amigos de Merda",
-    tagline: "Quem é o pior da roda?",
     cover: "/cover-amigos.jpg",
     cls: "hub-card--amigos",
+    cta: "JOGAR →",
   },
 ];
 
 export default function HomeScreen() {
   const navigate = useNavigate();
-  const { theme, toggle } = useTheme();
   const [failed, setFailed] = useState({});
 
   return (
-    <div className="ios-app">
-      <NavBar
-        trailing={{ label: theme === "dark" ? "☀" : "☾", onClick: toggle }}
-      />
-      <div className="ios-scroll">
-        <h1 className="ios-large-title">A Mesa</h1>
-        <p className="ios-lede">
-          Uma coletânea de jogos de festa. Junte a galera, escolha um e passe o
-          celular.
-        </p>
+    <>
+      <main className="frame screen hub">
+        <header className="mast">
+          <div className="l">N°01 / Edição 2026</div>
+          <div className="c">
+            <span className="dot" />
+            Coletânea
+            <span className="dot" />
+          </div>
+          <div className="r">PT — BR</div>
+        </header>
 
-        <div className="hub-grid">
+        <section className="hero">
+          <div className="meta">
+            <span>Jogos de mesa · ao vivo</span>
+            <span>Escolha o jogo</span>
+          </div>
+          <h1 style={{ fontSize: "clamp(48px,10vw,140px)" }}>
+            A Mesa<span className="pt">.</span>
+          </h1>
+          <p className="lede">
+            Uma coletânea de jogos de festa. Junte a galera, escolha um e passe o
+            celular.
+          </p>
+        </section>
+
+        <section className="hub-grid">
           {GAMES.map((g) => (
             <button
               key={g.key}
@@ -51,6 +66,7 @@ export default function HomeScreen() {
             >
               {failed[g.key] ? (
                 <span className="hub-fallback">
+                  <span className="hub-no">{g.no}</span>
                   <span className="hub-name">{g.name}</span>
                 </span>
               ) : (
@@ -61,21 +77,12 @@ export default function HomeScreen() {
                   onError={() => setFailed((f) => ({ ...f, [g.key]: true }))}
                 />
               )}
+              <span className="hub-cta">{g.cta}</span>
             </button>
           ))}
-        </div>
-
-        <p className="hub-credit">
-          Criado por{" "}
-          <a
-            href="https://instagram.com/okaikbarreto"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Kaik Barreto
-          </a>
-        </p>
-      </div>
-    </div>
+        </section>
+      </main>
+      <Colophon />
+    </>
   );
 }

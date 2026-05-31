@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-// iOS grouped-list roster (input + list). Both games feed it via props.
+// Presentational cadastro (input + list). Both games feed it via props.
 export default function PlayerRoster({ players, onAdd, onRemove, max = 16 }) {
   const [name, setName] = useState("");
 
@@ -16,52 +16,53 @@ export default function PlayerRoster({ players, onAdd, onRemove, max = 16 }) {
   };
 
   return (
-    <div className="ios-section">
-      <div className="ios-section-header">
-        Elenco · {players.length}/{max}
-      </div>
+    <>
+      <form
+        className="player-input"
+        id="playerForm"
+        autoComplete="off"
+        onSubmit={onSubmit}
+      >
+        <input
+          id="playerName"
+          type="text"
+          placeholder="Nome do próximo jogador…"
+          maxLength={22}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <button id="addBtn" type="submit" disabled={disabled}>
+          Adicionar +
+        </button>
+      </form>
 
-      <div className="ios-list">
-        {players.map((p, i) => (
-          <div className="ios-row" key={p.id}>
-            <span className="ios-badge">{i + 1}</span>
-            <span className="ios-row-label">{p.name}</span>
-            <button
-              type="button"
-              className="ios-delete"
-              aria-label={`Remover ${p.name}`}
-              onClick={() => onRemove(p.id)}
+      {players.length === 0 ? (
+        <p className="empty-note">
+          Nenhum jogador adicionado ainda. Comece pelo seu nome.
+        </p>
+      ) : (
+        <div className="players" id="playersList">
+          {players.map((p, i) => (
+            <div
+              key={p.id}
+              className="player scroll-reveal is-visible"
+              data-delay={String(i % 4)}
             >
-              −
-            </button>
-          </div>
-        ))}
-
-        {!atMax && (
-          <form className="ios-row" onSubmit={onSubmit} autoComplete="off">
-            <input
-              className="ios-row-input"
-              type="text"
-              placeholder="Adicionar jogador"
-              maxLength={22}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-            <button
-              type="submit"
-              className={"ios-add-icon" + (disabled ? " is-disabled" : "")}
-              aria-label="Adicionar"
-              disabled={disabled}
-            >
-              +
-            </button>
-          </form>
-        )}
-      </div>
-
-      <div className="ios-section-footer">
-        Mínimo 3 jogadores. Toque em + para adicionar.
-      </div>
-    </div>
+              <span className="pno">N°{String(i + 1).padStart(2, "0")}</span>
+              <span className="pname">{p.name}</span>
+              <button
+                className="px"
+                type="button"
+                data-id={p.id}
+                aria-label={`Remover ${p.name}`}
+                onClick={() => onRemove(p.id)}
+              >
+                remover ×
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </>
   );
 }

@@ -1,5 +1,6 @@
 import { useGame } from "../state/GameStore.jsx";
-import NavBar from "../components/ios/NavBar.jsx";
+import { THEMES } from "../data/themes.js";
+import PlayerRing from "../components/PlayerRing.jsx";
 
 const META_BY_MODE = {
   palavra:
@@ -12,35 +13,59 @@ const META_BY_MODE = {
 
 export default function GameScreen() {
   const { state, endRound, goToSetup } = useGame();
+  const roundStr = String(state.roundNo).padStart(2, "0");
+
+  let rightLabel = "— · —";
+  if (state.mode === "palavra") {
+    const theme = state.themeKey ? THEMES[state.themeKey] : null;
+    rightLabel = `Tema · ${theme ? theme.label : "—"}`;
+  } else if (state.mode === "perguntas") {
+    rightLabel = "Modo · Perguntas";
+  } else if (state.mode === "historia") {
+    rightLabel = "Modo · História";
+  }
+
+  const handleBack = (e) => {
+    e.stopPropagation();
+    if (window.confirm("Encerrar a rodada e voltar ao elenco?")) {
+      goToSetup();
+    }
+  };
+
+  const handleEnd = (e) => {
+    e.stopPropagation();
+    endRound();
+  };
 
   return (
-    <div className="ios-app">
-      <NavBar
-        title="Discussão"
-        back={{ label: "Elenco", onClick: goToSetup }}
-      />
-      <div className="ios-scroll">
-        <h1 className="ios-large-title">Discussão</h1>
-        <p className="ios-lede">{META_BY_MODE[state.mode]}</p>
+    <main className="game-wrap screen">
+      <div className="game-head">
+        <button type="button" onClick={handleBack}>
+          ← Encerrar rodada
+        </button>
+        <span>Discussão · Rodada {roundStr}</span>
+        <span>{rightLabel}</span>
+      </div>
 
-        <div className="ios-section">
-          <div className="ios-section-header">Na mesa · {state.players.length}</div>
-          <div className="ios-list">
-            {state.players.map((p, i) => (
-              <div className="ios-row" key={p.id}>
-                <span className="ios-badge">{i + 1}</span>
-                <span className="ios-row-label">{p.name}</span>
-              </div>
-            ))}
-          </div>
+      <div className="game-body">
+        <div className="game-prompt compact scroll-reveal">
+          <span className="small">Discussão aberta</span>
+          <div className="meta ital">{META_BY_MODE[state.mode]}</div>
+        </div>
+
+        <PlayerRing />
+
+        <div className="game-actions single scroll-reveal">
+          <button
+            type="button"
+            className="gbtn primary"
+            onClick={handleEnd}
+          >
+            <span className="l">Encerrar e revelar</span>
+            <span className="a">REVELAR ↘</span>
+          </button>
         </div>
       </div>
-
-      <div className="ios-footer">
-        <button type="button" className="ios-button" onClick={endRound}>
-          Encerrar e revelar ↘
-        </button>
-      </div>
-    </div>
+    </main>
   );
 }

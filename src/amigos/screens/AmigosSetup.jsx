@@ -1,37 +1,67 @@
-import { useNavigate } from "react-router-dom";
 import { useAmigos } from "../AmigosStore.jsx";
-import NavBar from "../../components/ios/NavBar.jsx";
 import PlayerRoster from "../../components/PlayerRoster.jsx";
 
 export default function AmigosSetup() {
   const { state, addPlayer, removePlayer, start } = useAmigos();
-  const navigate = useNavigate();
+  const canStart = state.players.length >= 3;
 
   return (
-    <>
-      <NavBar back={{ label: "Jogos", onClick: () => navigate("/") }} />
-      <div className="ios-scroll">
-        <h1 className="ios-large-title">Amigos de Merda</h1>
-        <p className="ios-lede">
-          Quem é o pior da roda? Cadastre a galera e comece a apontar dedos.
+    <main className="frame screen amigos-screen">
+      <header className="mast">
+        <div className="l">Amigos de Merda</div>
+        <div className="c">
+          <span className="dot" />
+          Elenco
+          <span className="dot" />
+        </div>
+        <div className="r">+18</div>
+      </header>
+
+      <section className="hero">
+        <div className="meta">
+          <span>Votação · sem dó</span>
+          <span>Mín. 3 jogadores</span>
+        </div>
+        <h1 style={{ fontSize: "clamp(36px,8vw,110px)" }}>
+          Amigos de Merda<span className="pt amg-pt">.</span>
+        </h1>
+        <p className="lede">
+          Puxe a carta, o grupo decide quem é o culpado e toca no nome. No fim,
+          quem juntou mais cartas perde a moral.
         </p>
-        <PlayerRoster
-          players={state.players}
-          onAdd={addPlayer}
-          onRemove={removePlayer}
-          max={16}
-        />
-      </div>
-      <div className="ios-footer">
+      </section>
+
+      <section className="section">
+        <div className="sec-no">
+          Cap. <span className="num">01</span> — Elenco
+        </div>
+        <div className="sec-body">
+          <div className="sec-head">
+            <h2>Os jogadores<span className="pt amg-pt">.</span></h2>
+            <div className="tag">
+              Total <b>{state.players.length}</b> · Mín. 3 · Máx. 16
+            </div>
+          </div>
+          <PlayerRoster
+            players={state.players}
+            onAdd={addPlayer}
+            onRemove={removePlayer}
+            max={16}
+          />
+        </div>
+      </section>
+
+      <section className="cta-row">
         <button
           type="button"
-          className="ios-button"
-          disabled={state.players.length < 3}
+          className="cta amg-cta"
+          disabled={!canStart}
           onClick={start}
         >
-          Começar
+          <span className="lbl">Começar<span className="pt">.</span></span>
+          <span className="arr">PUXAR A PRIMEIRA CARTA →</span>
         </button>
-      </div>
-    </>
+      </section>
+    </main>
   );
 }

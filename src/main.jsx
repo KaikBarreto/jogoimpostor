@@ -3,11 +3,6 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import AppShell from "./shell/AppShell.jsx";
 import "./index.css";
-import "./styles/ios.css";
-
-// Opt the document into the native-iOS skin (kills grain/vignette, sets bg).
-document.documentElement.classList.add("ios");
-document.body.classList.add("ios");
 
 // Register the service worker for PWA / offline support.
 // With `registerType: "autoUpdate"` in vite.config.js, new versions are

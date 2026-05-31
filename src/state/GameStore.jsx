@@ -21,7 +21,6 @@ function newId() {
 
 const initialState = {
   screen: "setup",          // "setup" | "reveal" | "game" | "result"
-  setupStep: 1,             // wizard step within setup: 1 (elenco) | 2 (partida)
   mode: "palavra",          // "palavra" | "perguntas" | "historia"
   players: [],              // [{id, name}]
   themeKey: null,
@@ -41,8 +40,6 @@ function reducer(state, action) {
   switch (action.type) {
     case "SET_MODE":
       return { ...state, mode: action.mode };
-    case "SET_SETUP_STEP":
-      return { ...state, setupStep: action.step };
     case "ADD_PLAYER": {
       const name = action.name.trim();
       if (!name) return state;
@@ -97,7 +94,7 @@ function reducer(state, action) {
     case "RESTART":
       return reducer({ ...state, roundNo: 1 }, { type: "START_ROUND" });
     case "GO_TO_SETUP":
-      return { ...state, screen: "setup", setupStep: 1 };
+      return { ...state, screen: "setup" };
     default:
       return state;
   }
@@ -118,7 +115,6 @@ export function GameProvider({ children }) {
 
   const actions = useMemo(() => ({
     setMode: (mode) => dispatch({ type: "SET_MODE", mode }),
-    setSetupStep: (step) => dispatch({ type: "SET_SETUP_STEP", step }),
     addPlayer: (name) => dispatch({ type: "ADD_PLAYER", name }),
     removePlayer: (id) => dispatch({ type: "REMOVE_PLAYER", id }),
     selectTheme: (key) => dispatch({ type: "SELECT_THEME", key }),
