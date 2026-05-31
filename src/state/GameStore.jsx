@@ -1,7 +1,8 @@
-import { createContext, useContext, useReducer, useCallback, useMemo } from "react";
+import { createContext, useContext, useReducer, useEffect, useMemo } from "react";
 import { THEMES } from "../data/themes.js";
 import { QUESTIONS } from "../data/questions.js";
 import { STORIES } from "../data/stories.js";
+import { loadRoster, saveRoster } from "./roster.js";
 
 /* Helpers */
 function pickRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
@@ -31,7 +32,7 @@ const initialState = {
   question: null,
   story: null,
   impostorIds: [],
-  shuffledOrder: [],
+  revealOrder: [],
   revealIdx: 0,
 };
 
@@ -68,19 +69,20 @@ function reducer(state, action) {
       const max = Math.max(1, Math.floor((state.players.length - 1) / 2));
       const count = Math.min(state.impostorCount, max);
       const impostorIds = pickN(state.players.map(p => p.id), count);
-      const shuffledOrder = shuffle(state.players.slice());
+      // Reveal follows the registration order of the roster (not shuffled).
+      const revealOrder = state.players.slice();
       return {
         ...state,
         word, question, story,
         impostorIds,
-        shuffledOrder,
+        revealOrder,
         revealIdx: 0,
         screen: "reveal",
       };
     }
     case "ADVANCE_REVEAL": {
       const next = state.revealIdx + 1;
-      if (next >= state.shuffledOrder.length) {
+      if (next >= state.revealOrder.length) {
         return { ...state, screen: "game" };
       }
       return { ...state, revealIdx: next };
@@ -101,7 +103,15 @@ function reducer(state, action) {
 const GameContext = createContext(null);
 
 export function GameProvider({ children }) {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, initialState, (init) => ({
+    ...init,
+    players: loadRoster(),
+  }));
+
+  // Persist the roster so the elenco carries across games this session.
+  useEffect(() => {
+    saveRoster(state.players);
+  }, [state.players]);
 
   const actions = useMemo(() => ({
     setMode: (mode) => dispatch({ type: "SET_MODE", mode }),

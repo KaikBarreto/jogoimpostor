@@ -5,12 +5,12 @@ import PlayingCard from "./PlayingCard.jsx";
 
 export default function FlipCard() {
   const { state, advanceReveal } = useGame();
-  const { shuffledOrder, revealIdx } = state;
+  const { revealOrder, revealIdx } = state;
   const [flipped, setFlipped] = useState(false);
   const timeoutRef = useRef(null);
 
-  const total = shuffledOrder.length;
-  const player = shuffledOrder[revealIdx];
+  const total = revealOrder.length;
+  const player = revealOrder[revealIdx];
   const counter = `${String(revealIdx + 1).padStart(2, "0")}/${String(total).padStart(2, "0")}`;
 
   // Reset to front whenever the player at revealIdx changes

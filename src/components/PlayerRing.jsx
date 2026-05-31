@@ -14,7 +14,7 @@ const PLAYER_SVG = (
 
 export default function PlayerRing() {
   const { state } = useGame();
-  const order = state.shuffledOrder;
+  const order = state.revealOrder;
   const N = order.length;
 
   return (

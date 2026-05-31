@@ -1,3 +1,16 @@
+/* Force the whole page dark while Amigos is active (covers mobile overscroll
+   and the fixed footer area, even when the global theme is light). */
+body.amigos-active {
+  background: #07090a;
+}
+body.amigos-active::after {
+  background: radial-gradient(
+    130% 90% at 50% 0%,
+    transparent 55%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+}
+
 .amigos-root {
   --amg-bg: #07090a;
   --amg-bg-2: #0d1110;

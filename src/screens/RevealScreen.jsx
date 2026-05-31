@@ -3,7 +3,7 @@ import FlipCard from "../components/FlipCard.jsx";
 
 export default function RevealScreen() {
   const { state, goToSetup } = useGame();
-  const total = state.shuffledOrder.length;
+  const total = state.revealOrder.length;
   const i = state.revealIdx;
   const counter = `${String(i + 1).padStart(2, "0")}/${String(total).padStart(2, "0")}`;
 

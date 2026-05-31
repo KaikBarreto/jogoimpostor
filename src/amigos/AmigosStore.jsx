@@ -1,6 +1,7 @@
-import { createContext, useContext, useReducer, useMemo } from "react";
+import { createContext, useContext, useReducer, useEffect, useMemo } from "react";
 import { AMIGOS_QUESTIONS } from "../data/amigosQuestions.js";
 import { buildDeck, currentCardId } from "./amigosLogic.js";
+import { loadRoster, saveRoster } from "../state/roster.js";
 
 function newId() {
   return typeof crypto !== "undefined" && crypto.randomUUID
@@ -73,7 +74,15 @@ function reducer(state, action) {
 const AmigosContext = createContext(null);
 
 export function AmigosProvider({ children }) {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, initialState, (init) => ({
+    ...init,
+    players: loadRoster(),
+  }));
+
+  // Persist the roster so the elenco carries across games this session.
+  useEffect(() => {
+    saveRoster(state.players);
+  }, [state.players]);
 
   const actions = useMemo(
     () => ({
