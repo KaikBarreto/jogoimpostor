@@ -1069,24 +1069,33 @@
     padding-bottom:max(72px, calc(56px + env(safe-area-inset-bottom)))!important;
   }
 
-  /* ——— Mobile-first polish (keeps the editorial identity) ——— */
+  /* ——— Stepped setup (editorial style, more breathing room) ——— */
+  .step-flag{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.28em;
+    text-transform:uppercase;
+    color:var(--ink-dim);
+    padding-top:6px;
+  }
+  .step-flag .num{color:var(--accent);font-weight:600}
+
+  /* extra spacing between the chapters on the setup screen */
+  #setupScreen .section{margin-top:clamp(32px,6.5vw,56px)}
+  #setupScreen .sec-body{gap:clamp(18px,3vw,26px)}
+  #setupScreen .cta-row{margin-top:clamp(30px,6vw,48px)}
+
+  /* secondary CTA (e.g. "Voltar") — outlined variant of .cta */
+  .cta.secondary{
+    background:var(--paper);
+    color:var(--ink);
+    outline:1px solid var(--ink);
+    outline-offset:-1px;
+  }
+  .cta.secondary:hover:not(:disabled){background:var(--ink);color:var(--paper)}
+
+  /* comfortable tap targets on phones */
   @media(max-width:600px){
-    /* Tighten vertical rhythm so the chapters are better diagrammed on phones */
-    .frame .section{margin-top:clamp(20px,5vw,30px)}
-    .sec-head{margin-bottom:4px}
-
-    /* Comfortable tap targets for the chapter cards */
-    .themes.modes .theme{padding:18px 18px;min-height:64px}
-    .theme{min-height:60px}
-
-    /* Keep the primary action reachable: pin "Iniciar a rodada" to the bottom */
-    #setupScreen{padding-bottom:118px!important}
-    #setupScreen .cta-row{
-      position:sticky;
-      bottom:0;
-      z-index:40;
-      margin-top:24px;
-      padding:14px 0 calc(env(safe-area-inset-bottom) + 12px);
-      background:linear-gradient(to top, var(--paper) 68%, rgba(var(--paper-rgb),0));
-    }
+    .themes.modes .theme{min-height:66px}
+    .theme{min-height:58px}
   }
