@@ -1,28 +1,32 @@
-import { useShell } from "../shell/AppShell.jsx";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Colophon from "../components/Colophon.jsx";
 import "./home.css";
 
 const GAMES = [
   {
     key: "impostor",
+    to: "/impostor",
     no: "N°01",
     name: "O Impostor",
-    desc: "Passe o celular, descubra sua palavra, encontre o impostor.",
+    cover: "/cover-impostor.png",
     cls: "hub-card--impostor",
     cta: "JOGAR →",
   },
   {
     key: "amigos",
+    to: "/amigos",
     no: "N°02",
     name: "Amigos de Merda",
-    desc: "Puxe a carta, aponte o culpado. Quem junta mais cartas perde a moral.",
+    cover: "/cover-amigos.png",
     cls: "hub-card--amigos",
     cta: "JOGAR →",
   },
 ];
 
 export default function HomeScreen() {
-  const { goToGame } = useShell();
+  const navigate = useNavigate();
+  const [failed, setFailed] = useState({});
 
   return (
     <>
@@ -57,11 +61,22 @@ export default function HomeScreen() {
               key={g.key}
               type="button"
               className={`hub-card ${g.cls}`}
-              onClick={() => goToGame(g.key)}
+              aria-label={g.name}
+              onClick={() => navigate(g.to)}
             >
-              <span className="hub-no">{g.no}</span>
-              <span className="hub-name">{g.name}</span>
-              <span className="hub-desc">{g.desc}</span>
+              {failed[g.key] ? (
+                <span className="hub-fallback">
+                  <span className="hub-no">{g.no}</span>
+                  <span className="hub-name">{g.name}</span>
+                </span>
+              ) : (
+                <img
+                  className="hub-cover"
+                  src={g.cover}
+                  alt={g.name}
+                  onError={() => setFailed((f) => ({ ...f, [g.key]: true }))}
+                />
+              )}
               <span className="hub-cta">{g.cta}</span>
             </button>
           ))}

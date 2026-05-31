@@ -9,15 +9,13 @@
   min-height: 100vh;
   background: var(--amg-bg);
   color: var(--amg-ink);
-}
-
-/* Override page tokens locally so reused .mast/.hero/.section look at home here */
-.amigos-root .amigos-screen {
+  /* Override page tokens for the whole game (top bar, mast, hero, sections) */
   --ink: var(--amg-ink);
   --ink-dim: var(--amg-dim);
   --rule: var(--amg-rule);
   --paper: var(--amg-bg);
   --paper-2: var(--amg-bg-2);
+  --paper-rgb: 7, 9, 10;
   --accent: var(--amg-accent);
 }
 

@@ -22,8 +22,8 @@ export default function AmigosSetup() {
           <span>Votação · sem dó</span>
           <span>Mín. 3 jogadores</span>
         </div>
-        <h1 style={{ fontSize: "clamp(40px,9vw,120px)" }}>
-          Quem é o pior<span className="pt amg-pt">?</span>
+        <h1 style={{ fontSize: "clamp(36px,8vw,110px)" }}>
+          Amigos de Merda<span className="pt amg-pt">.</span>
         </h1>
         <p className="lede">
           Puxe a carta, o grupo decide quem é o culpado e toca no nome. No fim,

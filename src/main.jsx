@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
 import AppShell from "./shell/AppShell.jsx";
 import "./index.css";
 
@@ -14,6 +15,8 @@ if ("serviceWorker" in navigator) {
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <AppShell />
+    <BrowserRouter>
+      <AppShell />
+    </BrowserRouter>
   </React.StrictMode>
 );
