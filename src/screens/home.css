@@ -1,12 +1,8 @@
 .hub-grid {
-  width: min(var(--max), 92%);
-  margin: 24px auto 90px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
-}
-@media (min-width: 720px) {
-  .hub-grid { gap: 20px; }
+  padding: 12px 16px 0;
 }
 
 .hub-card {
@@ -15,13 +11,13 @@
   padding: 0;
   aspect-ratio: 2 / 3;
   overflow: hidden;
-  border: 1px solid var(--rule);
-  background: var(--paper-2);
-  border-radius: 16px;
-  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  border-radius: 18px;
+  background: var(--ios-bg-elev);
+  box-shadow: 0 6px 20px var(--ios-shadow);
+  transition: transform 0.12s ease;
 }
-.hub-card:hover {
-  transform: translateY(-4px);
+.hub-card:active {
+  transform: scale(0.97);
 }
 
 .hub-cover {
@@ -31,44 +27,38 @@
   display: block;
 }
 
-.hub-cta {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 14px 16px;
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.14em;
-  color: #fff;
-  text-align: right;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.78));
-}
-
-/* Text fallback shown until the cover image exists */
+/* Text fallback shown only if a cover image fails to load */
 .hub-fallback {
   position: absolute;
   inset: 0;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 10px;
-  padding: 22px;
-}
-.hub-fallback .hub-no {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  color: var(--ink-dim);
+  align-items: flex-end;
+  padding: 18px;
+  background: linear-gradient(160deg, #15140f, #0b0b0a);
 }
 .hub-fallback .hub-name {
-  font-family: var(--serif);
-  font-size: clamp(22px, 5vw, 40px);
+  font-size: 26px;
+  font-weight: 700;
   line-height: 1.05;
+  color: #fff;
+}
+.hub-card--impostor .hub-fallback {
+  background: linear-gradient(160deg, #2a0d10, #0b0b0a);
+}
+.hub-card--impostor .hub-fallback .hub-name {
+  color: #ff6b75;
+}
+.hub-card--amigos .hub-fallback .hub-name {
+  color: #c7ff5a;
 }
 
-.hub-card--impostor { border-color: var(--accent); }
-.hub-card--impostor .hub-fallback .hub-name { color: var(--accent); }
-
-.hub-card--amigos { border-color: #b6ff3a; }
-.hub-card--amigos .hub-fallback .hub-name { color: #c7ff5a; }
+.hub-credit {
+  text-align: center;
+  margin-top: 26px;
+  font-size: 13px;
+  color: var(--ios-label-2);
+}
+.hub-credit a {
+  color: var(--accent);
+  font-weight: 600;
+}

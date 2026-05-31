@@ -1,55 +1,39 @@
-import { useState } from "react";
+import { useState, Fragment } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAmigos } from "../AmigosStore.jsx";
 import { ranking } from "../amigosLogic.js";
 import { AMIGOS_QUESTIONS } from "../../data/amigosQuestions.js";
+import NavBar from "../../components/ios/NavBar.jsx";
 
 export default function AmigosResult() {
-  const { state, playAgain, goSetup } = useAmigos();
+  const { state, playAgain } = useAmigos();
+  const navigate = useNavigate();
   const [openId, setOpenId] = useState(null);
   const ranked = ranking(state.players, state.scores);
 
   return (
-    <main className="frame screen amigos-screen">
-      <header className="mast">
-        <div className="l">Fim de Jogo</div>
-        <div className="c">
-          <span className="dot" />
-          Placar
-          <span className="dot" />
-        </div>
-        <div className="r">+18</div>
-      </header>
-
-      <section className="hero">
-        <div className="meta">
-          <span>Resultado · sem volta</span>
-          <span>Cartas acumuladas</span>
-        </div>
-        <h1 style={{ fontSize: "clamp(44px,10vw,130px)" }}>
-          O placar<span className="pt amg-pt">.</span>
-        </h1>
-        <p className="lede">
+    <>
+      <NavBar title="Placar" back={{ label: "Jogos", onClick: () => navigate("/") }} />
+      <div className="ios-scroll">
+        <h1 className="ios-large-title">O placar</h1>
+        <p className="ios-lede">
           Quem juntou mais cartas é, oficialmente, o amigo de merda da rodada.
           Toque num nome pra ver as cartas.
         </p>
-      </section>
 
-      <section className="section">
-        <div className="sec-body">
-          <div className="amg-rank">
+        <div className="ios-section">
+          <div className="ios-list">
             {ranked.map((p, i) => {
               const open = openId === p.id;
               return (
-                <div key={p.id} className="amg-rank-item">
+                <Fragment key={p.id}>
                   <button
                     type="button"
-                    className="amg-rank-row"
+                    className="ios-row"
                     onClick={() => setOpenId(open ? null : p.id)}
                   >
-                    <span className="amg-rank-pos">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <span className="amg-rank-name">{p.name}</span>
+                    <span className="ios-badge">{i + 1}</span>
+                    <span className="ios-row-label">{p.name}</span>
                     <span className="amg-rank-count">{p.cards.length} 🃏</span>
                   </button>
                   {open && (
@@ -63,27 +47,25 @@ export default function AmigosResult() {
                       )}
                     </ul>
                   )}
-                </div>
+                </Fragment>
               );
             })}
           </div>
         </div>
-      </section>
+      </div>
 
-      <section className="cta-row dual">
-        <button type="button" className="cta amg-cta" onClick={playAgain}>
-          <span className="lbl">Jogar de novo<span className="pt">.</span></span>
-          <span className="arr">NOVA PARTIDA ↻</span>
-        </button>
+      <div className="ios-footer dual">
         <button
           type="button"
-          className="cta amg-cta-ghost"
-          onClick={goSetup}
+          className="ios-button ios-button--tinted"
+          onClick={() => navigate("/")}
         >
-          <span className="lbl">Mexer no elenco<span className="pt">.</span></span>
-          <span className="arr">← ELENCO</span>
+          Início
         </button>
-      </section>
-    </main>
+        <button type="button" className="ios-button" onClick={playAgain}>
+          Jogar de novo ↻
+        </button>
+      </div>
+    </>
   );
 }
