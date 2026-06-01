@@ -10,12 +10,16 @@
   background: rgba(var(--paper-rgb), 0.92);
   backdrop-filter: blur(8px);
 }
-.game-topbar-back {
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  color: var(--ink-dim);
-  transition: color 0.15s ease;
+.game-topbar-home {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--ink);
 }
-.game-topbar-back:hover { color: var(--ink); }
-.game-topbar-back b { color: var(--ink); }
+.game-topbar-home .pt {
+  display: inline-block;
+  color: var(--accent);
+  transform: translateY(-0.05em);
+}
