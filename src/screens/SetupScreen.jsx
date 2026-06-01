@@ -12,6 +12,8 @@ import Cta from "../components/Cta.jsx";
 import { MODES } from "../data/modes.js";
 import { THEMES } from "../data/themes.js";
 
+const LABELS = { modo: "Modo", elenco: "Elenco", tema: "Universo", regras: "Regras" };
+
 export default function SetupScreen() {
   const {
     state,
@@ -22,8 +24,28 @@ export default function SetupScreen() {
   } = useGame();
   const rootRef = useRef(null);
 
+  // The ordered pages — "tema" only exists when playing in "palavra" mode.
+  const steps = [
+    "modo",
+    "elenco",
+    ...(state.mode === "palavra" ? ["tema"] : []),
+    "regras",
+  ];
+  const current = steps.includes(state.setupStep) ? state.setupStep : "modo";
+  const idx = steps.indexOf(current);
+  const isFirst = idx === 0;
+  const isLast = idx === steps.length - 1;
+  const total = steps.length;
+
+  const goNext = () => setSetupStep(steps[Math.min(idx + 1, steps.length - 1)]);
+  const goPrev = () => setSetupStep(steps[Math.max(idx - 1, 0)]);
+
+  // Scroll to the top of the page whenever the step changes.
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [current]);
+
   // Scroll reveal — observe .scroll-reveal nodes inside this screen.
-  // Re-runs per step so sections that mount on step change get observed.
   useEffect(() => {
     if (!rootRef.current) return;
     if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
@@ -32,7 +54,6 @@ export default function SetupScreen() {
         .forEach((el) => el.classList.add("is-visible"));
       return;
     }
-
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -44,23 +65,20 @@ export default function SetupScreen() {
       },
       { threshold: 0.08, rootMargin: "0px 0px -40px 0px" }
     );
-
     const observeAll = () => {
       if (!rootRef.current) return;
       rootRef.current
         .querySelectorAll(".scroll-reveal:not(.is-visible)")
         .forEach((el) => observer.observe(el));
     };
-
     observeAll();
     const mo = new MutationObserver(() => observeAll());
     mo.observe(rootRef.current, { childList: true, subtree: true });
-
     return () => {
       observer.disconnect();
       mo.disconnect();
     };
-  }, [state.setupStep]);
+  }, [current]);
 
   // Keep impostorCount within the safe range whenever player count changes.
   useEffect(() => {
@@ -70,12 +88,16 @@ export default function SetupScreen() {
   }, [state.players.length, state.impostorCount, setImpostorCount]);
 
   const impostorMax = Math.max(1, Math.floor((state.players.length - 1) / 2));
-  const showThemes = state.mode === "palavra";
   const modeLabel = MODES[state.mode]?.label ?? "—";
-  const themeLabel = state.themeKey
-    ? THEMES[state.themeKey]?.label ?? "—"
-    : "—";
-  const canContinue = state.players.length >= 3;
+  const themeLabel = state.themeKey ? THEMES[state.themeKey]?.label ?? "—" : "—";
+
+  // Can the user advance from the current page?
+  let canAdvance = true;
+  if (current === "elenco") canAdvance = state.players.length >= 3;
+  else if (current === "tema") canAdvance = !!state.themeKey;
+
+  const stepNo = String(idx + 1).padStart(2, "0");
+  const totalNo = String(total).padStart(2, "0");
 
   return (
     <main
@@ -85,65 +107,15 @@ export default function SetupScreen() {
       style={{ paddingBottom: 80 }}
     >
       <Mast />
+      {isFirst && <Hero />}
 
-      {state.setupStep === 1 ? (
-        <>
-          <Hero />
-
-          <div className="step-flag scroll-reveal">
-            Etapa <span className="num">01</span> / 02 — Elenco
-          </div>
-
-          {/* Cap. 01 — Elenco */}
-          <section className="section scroll-reveal" id="playersSection">
-            <div className="sec-no">
-              Cap. <span className="num">01</span> — Elenco
-            </div>
-            <div className="sec-body">
-              <div className="sec-head">
-                <h2>
-                  Os jogadores<span className="pt">.</span>
-                </h2>
-                <div className="tag">
-                  Total <b>{state.players.length}</b> · Mín. 3 · Máx. 16
-                </div>
-              </div>
-
-              <PlayerRoster
-                players={state.players}
-                onAdd={addPlayer}
-                onRemove={removePlayer}
-                max={16}
-              />
-            </div>
-          </section>
-
-          <section className="cta-row scroll-reveal">
-            <button
-              type="button"
-              className="cta"
-              disabled={!canContinue}
-              onClick={() => setSetupStep(2)}
-            >
-              <span className="lbl">
-                Continuar<span className="pt">.</span>
-              </span>
-              <span className="arr">PRÓXIMA ETAPA →</span>
-            </button>
-          </section>
-        </>
-      ) : (
-        <>
-          <div className="step-flag scroll-reveal">
-            Etapa <span className="num">02</span> / 02 — A partida
-          </div>
-
-          {/* Cap. 02 — Modo */}
-          <section className="section scroll-reveal">
-            <div className="sec-no">
-              Cap. <span className="num">02</span> — Modo
-            </div>
-            <div className="sec-body">
+      <section className="section scroll-reveal" key={current}>
+        <div className="sec-no">
+          Etapa <span className="num">{stepNo}</span> / {totalNo} — {LABELS[current]}
+        </div>
+        <div className="sec-body">
+          {current === "modo" && (
+            <>
               <div className="sec-head">
                 <h2>
                   Como jogar<span className="pt">.</span>
@@ -153,35 +125,44 @@ export default function SetupScreen() {
                 </div>
               </div>
               <ModeGrid />
-            </div>
-          </section>
-
-          {/* Cap. 03 — Universo (only for palavra mode) */}
-          {showThemes && (
-            <section className="section scroll-reveal" id="themesSection">
-              <div className="sec-no">
-                Cap. <span className="num">03</span> — Universo
-              </div>
-              <div className="sec-body">
-                <div className="sec-head">
-                  <h2>
-                    Tema da rodada<span className="pt">.</span>
-                  </h2>
-                  <div className="tag">
-                    Selecionado · <b>{themeLabel}</b>
-                  </div>
-                </div>
-                <ThemeGrid />
-              </div>
-            </section>
+            </>
           )}
 
-          {/* Cap. 04 — Regras */}
-          <section className="section scroll-reveal">
-            <div className="sec-no">
-              Cap. <span className="num">04</span> — Regras
-            </div>
-            <div className="sec-body">
+          {current === "elenco" && (
+            <>
+              <div className="sec-head">
+                <h2>
+                  Os jogadores<span className="pt">.</span>
+                </h2>
+                <div className="tag">
+                  Total <b>{state.players.length}</b> · Mín. 3 · Máx. 16
+                </div>
+              </div>
+              <PlayerRoster
+                players={state.players}
+                onAdd={addPlayer}
+                onRemove={removePlayer}
+                max={16}
+              />
+            </>
+          )}
+
+          {current === "tema" && (
+            <>
+              <div className="sec-head">
+                <h2>
+                  Tema da rodada<span className="pt">.</span>
+                </h2>
+                <div className="tag">
+                  Selecionado · <b>{themeLabel}</b>
+                </div>
+              </div>
+              <ThemeGrid />
+            </>
+          )}
+
+          {current === "regras" && (
+            <>
               <div className="sec-head">
                 <h2>
                   Configurações
@@ -191,7 +172,6 @@ export default function SetupScreen() {
                 </h2>
                 <div className="tag">Ajuste a partida</div>
               </div>
-
               <SettingsRow
                 label="Quantos impostores?"
                 hint="Recomendado · 1 para 3–6 · 2 para 7+"
@@ -203,30 +183,61 @@ export default function SetupScreen() {
                   onChange={setImpostorCount}
                 />
               </SettingsRow>
-
               <SettingsRow
                 label="Mostrar dica para o impostor?"
                 hint="Mostra apenas o tema, sem a palavra"
               >
                 <HintToggle />
               </SettingsRow>
-            </div>
-          </section>
+            </>
+          )}
+        </div>
+      </section>
 
-          <section className="cta-row dual scroll-reveal">
-            <button
-              type="button"
-              className="cta secondary"
-              onClick={() => setSetupStep(1)}
-            >
-              <span className="lbl">
-                Voltar<span className="pt">.</span>
-              </span>
-              <span className="arr">← ELENCO</span>
-            </button>
-            <Cta />
-          </section>
-        </>
+      {isLast ? (
+        <section className="cta-row dual scroll-reveal">
+          <button type="button" className="cta secondary" onClick={goPrev}>
+            <span className="lbl">
+              Voltar<span className="pt">.</span>
+            </span>
+            <span className="arr">← {LABELS[steps[idx - 1]].toUpperCase()}</span>
+          </button>
+          <Cta />
+        </section>
+      ) : isFirst ? (
+        <section className="cta-row scroll-reveal">
+          <button
+            type="button"
+            className="cta"
+            disabled={!canAdvance}
+            onClick={goNext}
+          >
+            <span className="lbl">
+              Continuar<span className="pt">.</span>
+            </span>
+            <span className="arr">PRÓXIMA ETAPA →</span>
+          </button>
+        </section>
+      ) : (
+        <section className="cta-row dual scroll-reveal">
+          <button type="button" className="cta secondary" onClick={goPrev}>
+            <span className="lbl">
+              Voltar<span className="pt">.</span>
+            </span>
+            <span className="arr">← {LABELS[steps[idx - 1]].toUpperCase()}</span>
+          </button>
+          <button
+            type="button"
+            className="cta"
+            disabled={!canAdvance}
+            onClick={goNext}
+          >
+            <span className="lbl">
+              Continuar<span className="pt">.</span>
+            </span>
+            <span className="arr">PRÓXIMA ETAPA →</span>
+          </button>
+        </section>
       )}
     </main>
   );

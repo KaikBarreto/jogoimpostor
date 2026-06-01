@@ -21,7 +21,7 @@ function newId() {
 
 const initialState = {
   screen: "setup",          // "setup" | "reveal" | "game" | "result"
-  setupStep: 1,             // wizard step in setup: 1 (elenco) | 2 (partida)
+  setupStep: "modo",        // setup page: "modo" | "elenco" | "tema" | "regras"
   mode: "palavra",          // "palavra" | "perguntas" | "historia"
   players: [],              // [{id, name}]
   themeKey: null,
@@ -97,7 +97,7 @@ function reducer(state, action) {
     case "RESTART":
       return reducer({ ...state, roundNo: 1 }, { type: "START_ROUND" });
     case "GO_TO_SETUP":
-      return { ...state, screen: "setup", setupStep: 1 };
+      return { ...state, screen: "setup", setupStep: "modo" };
     default:
       return state;
   }
